@@ -1,0 +1,10 @@
+{% extends "inventory/skeleton.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="d-flex justify-content-center align-items-center" style="height:100vh">
+        <div class="card">
+            <small class="text-muted"><a class="ml-2" href="{% url 'login' %}">Log In Again</a></small>
+        </div>
+    </div>
+{% endblock content %}
