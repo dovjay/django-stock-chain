@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'phonenumber_field'
+    'phonenumber_field',
+    'crispy_forms'
 ]
 
 MIDDLEWARE = [
@@ -129,7 +130,9 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-# LOGIN_REDIRECT_URL = ''
-# LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = 'login'
 
 PHONENUMBER_DEFAULT_REGION = 'ID'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

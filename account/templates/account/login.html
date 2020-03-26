@@ -1,0 +1,20 @@
+{% extends "inventory/skeleton.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="d-flex justify-content-center align-items-center" style="height:100vh">
+        <div class="card">
+            <h1 class="text-center">Login</h1>
+            <form method="POST">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    {{ form|crispy }}
+                </fieldset>
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit">Log In</button>
+                    {% comment %} <small class="text-muted ml-2"> <a href="{% url 'password_reset' %}">Forgot password?</a></small> {% endcomment %}
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}
