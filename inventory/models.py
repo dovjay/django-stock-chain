@@ -14,8 +14,6 @@ class Product(models.Model):
     name = models.CharField(max_length=200)
     sku = models.CharField(max_length=200, unique=True)
     category = models.ForeignKey(Category, on_delete=models.SET_DEFAULT, default=1)
-    sell_price = models.PositiveIntegerField(default=0, blank=True, null=True)
-    buy_price = models.PositiveIntegerField(default=0)
     stock = models.PositiveIntegerField(default=0)
     note = models.TextField(blank=True)
     image = models.ImageField(upload_to='product_images/')
@@ -42,6 +40,8 @@ class Varian(models.Model):
 class VarianProduct(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     varian = models.ForeignKey(Varian, on_delete=models.CASCADE)
+    sell_price = models.PositiveIntegerField(default=0, blank=True, null=True)
+    buy_price = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return f'{self.product} - {self.varian}'
