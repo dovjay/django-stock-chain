@@ -1,0 +1,85 @@
+{% extends "inventory/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="widget p-lg">
+            <h4 class="m-b-lg">Categories</h4>
+            <div class="d-flex">
+                <div class="mb-4 d-flex">
+                    <div class="form-group">
+                        <label for="search" class="col-sm-3">Search</label>
+                        <div class="col-sm-12">
+                            <input  type="text" id="search" class="form-control" placeholder="Cari">
+                        </div>
+                    </div>
+                </div>
+                <div class="ml-auto">
+                    <a href={% url 'inventory-create-category' %} class="btn btn-primary">Tambah Kategori</a>
+                </div>
+            </div>
+
+            <table class="table table-hover">
+                <tr>
+                    <th>Id</th>
+                    <th>Nama</th>
+                    <th>Aksi</th>
+                </tr>
+                {% for category in categories %}
+                    <tr>
+                        <td>{{category.id}}</td>
+                        <td>{{category.name}}</td>
+                        <td>
+                            {% if category.name != 'All' %}
+                                <a href={% url 'inventory-update-category' category.id %} class="btn btn-secondary">Update</a>
+                                <button class="btn btn-danger ml-2" onClick="deleteCategory('{% url 'inventory-delete-category' category.id %}', '{{category.name}}')">Hapus</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+    <script>
+        function deleteCategory(url, name) {
+            $.ajaxSetup({ 
+                beforeSend: function(xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                } 
+            })
+
+            message = "Kamu yakin ingin menghapus kategori ini? " + name
+            confirm_delete = confirm(message)
+            if (confirm_delete) {
+                $.ajax({
+                    url: url,
+                    method: "POST",
+                    success: function() {
+                        location.reload()
+                    }
+                })
+            }
+        }
+    </script>
+{% endblock script %}

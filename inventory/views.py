@@ -1,5 +1,8 @@
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render
-from .forms import ProductForm
+from .forms import ProductForm, CategoryForm
+from .models import Category
+
 # Create your views here.
 def dashboard(request):
     return render(request, 'inventory/dashboard.html')
@@ -21,5 +24,27 @@ def product_form(request):
         context = {
             'form': form
         }
-
         return render(request, 'inventory/product_form.html', context)
+
+def categories(request):
+    categories = Category.objects.all()
+    context = {
+        'categories': categories
+    }
+    return render(request, 'inventory/categories.html', context)
+
+class CreateCategory(CreateView):
+    model = Category
+    form_class = CategoryForm
+    template_name_suffix =  '_modal_form'
+    success_url = '/categories/'
+
+class UpdateCategory(UpdateView):
+    model = Category
+    form_class = CategoryForm
+    template_name_suffix = '_modal_form'
+    success_url = '/categories/'
+    
+class DeleteCategory(DeleteView):
+    model = Category
+    success_url = '/categories/'

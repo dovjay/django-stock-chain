@@ -33,12 +33,13 @@
     <div id="list">
       <ul class="nav flex-column">
         {% comment %} Real Navbar start here {% endcomment %}
-        <li class="nav-item"><a href="/" class="nav-link active" ><i class="fa fa-adjust"></i>Dashboard</a></li>
+        <li class="nav-item"><a href="/" class="nav-link" ><i class="fa fa-adjust"></i>Dashboard</a></li>
         <li class="nav-item"><a href={% url 'account-contacts' %} class="nav-link"><i class="fa fa-user"></i>Contact</a></li>
         <li class="nav-item"><a href="#inventory-tab" class="nav-link collapsed" data-toggle="collapse"><i class="fa fa-table"></i>Inventory<span class="sub-ico"><i class="fa fa-angle-down"></i></span></a></li>
         <li class="sub collapse" id="inventory-tab">
             <a href={% url 'inventory-products' %} class="nav-link" data-parent="#inventory-tab">Products</a>
             <a href={% url 'inventory-varian-product' %} class="nav-link" data-parent="#inventory-tab">Varian Product</a>
+            <a href={% url 'inventory-categories' %} class="nav-link" data-parent="#inventory-tab">Kategori</a>
         </li>
         <li class="nav-item"><a href={% url 'inventory-invoices' %} class="nav-link"><i class="fa fa-money-bill-alt"></i>Invoice</a></li>
         <li class="nav-item"><a href={% url 'account-manage-accounts' %} class="nav-link"><i class="fa fa-users"></i>Manage Accounts</a></li>
@@ -88,6 +89,7 @@
     <!-- start with the real content -->
     <div id="real">
       {% block content %}{% endblock %}
+      {% block modal %}{% endblock %}
     </div>
     <!-- end the real content -->
   </div>
@@ -101,6 +103,7 @@
 <script src="{% static 'inventory/js/highcharts.js' %}"></script>
 <script src="{% static 'inventory/js/chart.js' %}"></script>
 <script src="{% static 'inventory/js/app.js' %}"></script>
+{% block script %}{% endblock %}
 <!-- end screpting -->
 </body>
 </html>

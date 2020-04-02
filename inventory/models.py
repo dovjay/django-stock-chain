@@ -4,10 +4,8 @@ from account.models import Contact, Warehouse
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=100)
-    parent = models.ForeignKey("self", on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
-        if self.parent: return f'{self.parent} -> {self.name}'
         return f'{self.name}'
 
 class Product(models.Model):
