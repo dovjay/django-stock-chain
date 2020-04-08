@@ -19,9 +19,14 @@ class Contact(models.Model):
     def __str__(self):
         return f'{self.name}'
 
+class Account(models.Model):
+    image = models.ImageField(upload_to='account_images/')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user')
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='owner')
+
 class Warehouse(models.Model):
     name = models.CharField(max_length=200)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    account = models.OneToOneField(Account, on_delete=models.CASCADE, null=True, blank=True)
     address1 = models.CharField(max_length=50, blank=True)
     address2 = models.CharField(max_length=50, blank=True)
     city = models.CharField(max_length=50, blank=True)

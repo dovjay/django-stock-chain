@@ -10,8 +10,9 @@
                         <label for="control-demo-6" class="col-sm-3">Warehouse</label>
                         <div id="control-demo-6" class="col-sm-12">
                             <select class="form-control">
-                                <option>Gudang A</option>
-                                <option>Gudang B</option>                                
+                                {% for warehouse in warehouses %}
+                                    <option>{{warehouse.name}}</option>
+                                {% endfor %}                            
                             </select>
                         </div>
                     </div>
@@ -23,26 +24,84 @@
                     </div>
                 </div>
                 <div class="ml-auto">
-                    <a class="btn btn-primary" href={% url 'inventory-product-form'%}>Tambah Product</a>
+                    <a class="btn btn-primary" href={% url 'inventory-create-product'%}>Tambah Product</a>
                 </div>
             </div>
-
-            <table class="table table-hover">
-                <tr>
-                    <th>Id</th>
-                    <th>Gambar</th>
-                    <th>Nama</th>
-                    <th>SKU/Kode</th>
-                    <th>Kategori</th>
-                    <th>Stok</th>
-                    <th>Jumlah Varian</th>
-                    <th>Terakhir diperbarui</th>
-                    <th>Aksi</th>
-                </tr>
-                <tr><td>1</td><td>Mark</td><td>Otto</td><td>@mdo</td></tr>
-                <tr><td>2</td><td>Jacob</td><td>Thornton</td><td>@fat</td></tr>
-                <tr><td>3</td><td>Larry</td><td>the Bird</td><td>@twitter</td></tr>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <tr>
+                        <th>Id</th>
+                        <th>Gambar</th>
+                        <th>Nama</th>
+                        <th>SKU/Kode</th>
+                        <th>Kategori</th>
+                        <th>Stok</th>
+                        <th>Jumlah Varian</th>
+                        <th>Terakhir diperbarui</th>
+                        <th>Aksi</th>
+                    </tr>
+                    {% for product in products %}
+                        <tr>
+                            <td>{{product.id}}</td>
+                            <td>
+                                <img src="{{product.image.url}}" width="150px">
+                            </td>
+                            <td>{{product.name}}</td>
+                            <td>{{product.sku}}</td>
+                            <td>{{product.category.name}}</td>
+                            <td>{{product.stock}}</td>
+                            <td>1</td>
+                            <td>{{product.last_modified}}</td>
+                            <td>
+                                <a href={% url 'inventory-update-product' product.id %} class="btn btn-secondary">Update</a>
+                                <button class="btn btn-danger ml-2" onClick="deleteProduct('{% url 'inventory-delete-product' product.id %}', '{{product.name}}')">Hapus</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
         </div>
     </div>
 {% endblock content %}
+
+{% block script %}
+    <script>
+        function deleteProduct(url, name) {
+            $.ajaxSetup({ 
+                beforeSend: function(xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                } 
+            })
+
+            message = "Kamu yakin ingin menghapus produk ini? " + name
+            confirm_delete = confirm(message)
+            if (confirm_delete) {
+                $.ajax({
+                    url: url,
+                    method: "POST",
+                    success: function() {
+                        location.reload()
+                    }
+                })
+            }
+        }
+    </script>
+{% endblock script %}
