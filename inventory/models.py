@@ -22,24 +22,17 @@ class Product(models.Model):
     def __str__(self):
         return f'{self.name}'
 
-class Varian(models.Model):
+class VarianProduct(models.Model):
     ATTR_CHOICE = [
         ("WARNA", "Warna"),
         ("UKURAN", "Ukuran"),
         ("BERAT", "Berat")
     ]
-
-    attribute = models.CharField(max_length=10, choices=ATTR_CHOICE, default="UKURAN")
-    value = models.CharField(max_length=100)
-
-    def __str__(self):
-        return f'{self.attribute}: {self.value}'
-
-class VarianProduct(models.Model):
+    varian_attribute = models.CharField(max_length=10, choices=ATTR_CHOICE, default="UKURAN")
+    varian_value = models.CharField(max_length=100)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    varian = models.ForeignKey(Varian, on_delete=models.CASCADE)
     sell_price = models.PositiveIntegerField(default=0, blank=True, null=True)
     buy_price = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return f'{self.product} - {self.varian}'
+        return f'{self.product} - {self.varian_attribute}: {self.varian_value}'
