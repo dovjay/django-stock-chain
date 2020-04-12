@@ -15,23 +15,23 @@ class Contact(models.Model):
     city = models.CharField(max_length=50, blank=True)
     province = models.CharField(max_length=50, blank=True)
     nation = models.CharField(max_length=50, blank=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.name}'
 
-class Account(models.Model):
-    image = models.ImageField(upload_to='account_images/')
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user')
-    owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='owner')
-
 class Warehouse(models.Model):
     name = models.CharField(max_length=200)
-    account = models.OneToOneField(Account, on_delete=models.CASCADE, null=True, blank=True)
     address1 = models.CharField(max_length=50, blank=True)
     address2 = models.CharField(max_length=50, blank=True)
     city = models.CharField(max_length=50, blank=True)
     province = models.CharField(max_length=50, blank=True)
     nation = models.CharField(max_length=50, blank=True)
+    owner = models.OneToOneField(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.name}'
+
+class PermissionWarehouse(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
