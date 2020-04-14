@@ -42,7 +42,9 @@
             <a href={% url 'inventory-categories' %} class="nav-link" data-parent="#inventory-tab">Kategori</a>
         </li>
         <li class="nav-item"><a href={% url 'inventory-invoices' %} class="nav-link"><i class="fa fa-money-bill-alt"></i>Invoice</a></li>
-        <li class="nav-item"><a href={% url 'account-manage-accounts' %} class="nav-link"><i class="fa fa-users"></i>Manage Accounts</a></li>
+        {% if user.is_superuser %}
+          <li class="nav-item"><a href={% url 'account-manage-accounts' %} class="nav-link"><i class="fa fa-users"></i>Manage Accounts</a></li>
+        {% endif %}
       </ul>
     </div>
     <!-- end the list -->
@@ -63,7 +65,7 @@
           <button class="btn btn-info hidden-xs-down"><i class="fa fa-bell"></i></button>
           <button class="btn btn-info hidden-xs-down"><i class="fa fa-envelope"></i></button>
           <div class="dropdown">
-            <button class="btn btn-info dropdown-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">mohamed</button>
+            <button class="btn btn-info dropdown-toggle" id="userDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{user.username}}</button>
             <div class="dropdown-menu" aria-labelledby="userDropdown">
              <a class="dropdown-item" href="#">Account</a>
              <a class="dropdown-item" href="#">Settings</a>

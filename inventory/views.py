@@ -22,7 +22,12 @@ class CreateProduct(CreateView):
     model = Product
     form_class = ProductForm
     template_name_suffix = '_form'
-    success_url = reverse_lazy('inventory-products')
+
+    def get_success_url(self, **kwargs):
+        url = reverse_lazy('inventory-varian-product')
+        qs = f'product_id={self.object.id}'
+        success_url = f'{url}?{qs}'
+        return success_url
 
 class UpdateProduct(UpdateView):
     model = Product
@@ -70,7 +75,6 @@ class UpdateVarianProduct(UpdateView):
     model = VarianProduct
     form_class = VarianProductForm
     template_name_suffix = '_form'
-    success_url = '/varian-product/'
 
     def get_success_url(self, **kwargs):
         url = reverse_lazy('inventory-varian-product')
@@ -80,7 +84,7 @@ class UpdateVarianProduct(UpdateView):
 
 class DeleteVarianProduct(DeleteView):
     model = VarianProduct
-    success_url = '/varian-product/'
+    success_url = reverse_lazy('inventory-varian-product')
 
 def invoices(request):
     return render(request, 'inventory/invoices.html')
