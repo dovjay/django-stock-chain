@@ -1,5 +1,171 @@
 {% extends "inventory/base.html" %}
 
 {% block content %}
-    <div>Manage accounts</div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="widget p-lg">
+                <h4 class="m-b-lg">Warehouse List</h4>
+                <div class="d-flex mb-4">
+                    <div class="ml-auto">
+                        <a class="btn btn-primary" href={% url 'account-create-warehouse' %}>Create Warehouse</a>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Aksi</th>
+                        </tr>
+                        {% for warehouse in warehouses %}
+                            <tr>
+                                <td>{{warehouse.id}}</td>
+                                <td>{{warehouse.name}}</td>
+                                <td>
+                                    <a href={% url 'account-update-warehouse' warehouse.id %} class="btn btn-secondary">Update</a>
+                                    <button class="btn btn-danger ml-2" onClick="deleteWarehouse('{% url 'account-delete-warehouse' warehouse.id %}', '{{warehouse.name}}')">Delete</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="widget p-lg">
+                <h4 class="m-b-lg">Permissions</h4>
+                <div class="d-flex mb-4">
+                    <div class="ml-auto">
+                        <a class="btn btn-primary" href={% url 'account-create-permission' %}>Create Permission</a>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <tr>
+                            <th>User</th>
+                            <th>Warehouse</th>
+                            <th>Aksi</th>
+                        </tr>
+                        {% for perm in permissions %}
+                            <tr>
+                                <td>{{perm.user.username}}</td>
+                                <td>{{perm.warehouse.name}}</td>
+                                <td>
+                                    <button class="btn btn-danger ml-2" onClick="deletePerm('{% url 'account-delete-permission' perm.id %}', '{{perm.user.username}} - {{perm.warehouse.name}}')">Delete</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="widget p-lg">
+                <h4 class="m-b-lg">Accounts</h4>
+                <div class="d-flex mb-4">
+                    <div class="ml-auto">
+                        <a class="btn btn-primary" href={% url 'account-create-account' %}>Create Account</a>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <tr>
+                            <th>Id</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Aksi</th>
+                        </tr>
+                        {% for account in accounts %}
+                            <tr>
+                                <td>{{account.id}}</td>
+                                <td>{{account.username}}</td>
+                                <td>{{account.email}}</td>
+                                <td>
+                                    <a href={% url 'account-update-account' account.id %} class="btn btn-secondary">Update</a>
+                                    <button class="btn btn-danger ml-2" onClick="deleteAccount('{% url 'account-delete-account' account.id %}', '{{account.username}}')">Delete</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}
+
+{% block script %}
+    <script>
+        function setToken() {
+            $.ajaxSetup({ 
+                beforeSend: function(xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                } 
+            })
+        }
+
+        function deleteWarehouse(url, name) {
+            setToken()
+            message = "Kamu yakin ingin menghapus gudang ini? " + name
+            confirm_delete = confirm(message)
+            if (confirm_delete) {
+                $.ajax({
+                    url: url,
+                    method: "POST",
+                    success: function() {
+                        location.reload()
+                    }
+                })
+            }
+        }
+
+        function deletePerm(url, name) {
+            setToken()
+            message = "Kamu yakin ingin menghapus permission ini? " + name
+            confirm_delete = confirm(message)
+            if (confirm_delete) {
+                $.ajax({
+                    url: url,
+                    method: "POST",
+                    success: function() {
+                        location.reload()
+                    }
+                })
+            }
+        }
+
+        function deleteAccount(url, name) {
+            setToken()
+            message = "Kamu yakin ingin menghapus akun ini? " + name
+            confirm_delete = confirm(message)
+            if (confirm_delete) {
+                $.ajax({
+                    url: url,
+                    method: "POST",
+                    success: function() {
+                        location.reload()
+                    }
+                })
+            }
+        }
+    </script>
+{% endblock script %}
