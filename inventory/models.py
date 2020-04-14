@@ -12,7 +12,6 @@ class Product(models.Model):
     name = models.CharField(max_length=200)
     sku = models.CharField(max_length=200, unique=True)
     category = models.ForeignKey(Category, on_delete=models.SET_DEFAULT, default=1)
-    stock = models.PositiveIntegerField(default=0)
     note = models.TextField(blank=True)
     image = models.ImageField(upload_to='product_images/')
     supplier = models.ForeignKey(Contact, on_delete=models.SET_NULL, null=True, blank=True)
@@ -24,13 +23,14 @@ class Product(models.Model):
 
 class VarianProduct(models.Model):
     ATTR_CHOICE = [
-        ("WARNA", "Warna"),
         ("UKURAN", "Ukuran"),
+        ("WARNA", "Warna"),
         ("BERAT", "Berat")
     ]
     varian_attribute = models.CharField(max_length=10, choices=ATTR_CHOICE, default="UKURAN")
     varian_value = models.CharField(max_length=100)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    stock = models.PositiveIntegerField(default=0)
     sell_price = models.PositiveIntegerField(default=0, blank=True, null=True)
     buy_price = models.PositiveIntegerField(default=0)
 

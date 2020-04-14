@@ -27,11 +27,11 @@ class Warehouse(models.Model):
     city = models.CharField(max_length=50, blank=True)
     province = models.CharField(max_length=50, blank=True)
     nation = models.CharField(max_length=50, blank=True)
-    owner = models.OneToOneField(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.name}'
 
 class PermissionWarehouse(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    warehouse = models.OneToOneField(Warehouse, on_delete=models.CASCADE)

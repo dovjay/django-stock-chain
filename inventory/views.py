@@ -1,27 +1,49 @@
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
-from .forms import ProductForm, VarianProductForm, CategoryForm
+from .forms import ProductForm, ProductSUForm, VarianProductForm, CategoryForm
 from .models import Category, Product, VarianProduct
-from account.models import Warehouse
+from account.models import Warehouse, PermissionWarehouse
 
 # Create your views here.
 def dashboard(request):
     return render(request, 'inventory/dashboard.html')
 
 def products(request):
-    warehouses = Warehouse.objects.all()
-    products = Product.objects.all()
+    if request.user.is_superuser:
+        if request.GET.get('warehouse_id'):
+            warehouse = Warehouse.objects.get(pk=request.GET.get('warehouse_id'))
+            warehouses = Warehouse.objects.all()
+            products = Product.objects.filter(warehouse=warehouse)
+        else:
+            warehouses = Warehouse.objects.all()
+            warehouse = warehouses[0]
+            products = Product.objects.filter(warehouse=warehouse)
+    else:
+        permission = PermissionWarehouse.objects.get(user=request.user)
+        warehouse = Warehouse.objects.get(warehouse=permission.warehouse)
+        products = Product.objects.filter(warehouse=permission.warehouse)
     context = {
         'products': products,
-        'warehouses': warehouses
+        'warehouses': warehouses,
+        'warehouse_name': warehouse.name
     }
     return render(request, 'inventory/products.html', context)
 
 class CreateProduct(CreateView):
     model = Product
-    form_class = ProductForm
     template_name_suffix = '_form'
+
+    def get_form_class(self):
+        if self.request.user.is_superuser:
+            return ProductSUForm
+        return ProductForm
+
+    def form_valid(self, form):
+        if not self.request.user.is_superuser:
+            permission = PermissionWarehouse.objects.get(user=self.request.user)
+            form.instance.warehouse = permission.warehouse
+        return super(CreateProduct, self).form_valid(form)
 
     def get_success_url(self, **kwargs):
         url = reverse_lazy('inventory-varian-product')
@@ -42,17 +64,17 @@ class DeleteProduct(DeleteView):
 def varian_product(request):
     if request.GET.get('product_id'):
         product = Product.objects.get(pk=request.GET.get('product_id'))
-        product_name = product.name
+        product_sku = product.sku
         varian_products = VarianProduct.objects.filter(product=product)
     else:
-        product_name = ''
+        product_sku = ''
         varian_products = None
 
     products = Product.objects.all()
     context = {
         'products': products,
         'varian_products': varian_products,
-        'product_name': product_name
+        'product_sku': product_sku
     }
     return render(request, 'inventory/varian_product.html', context)
 
