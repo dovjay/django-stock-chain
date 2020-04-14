@@ -3,16 +3,16 @@
 {% block content %}
     <div class="col-md-12">
         <div class="widget p-lg">
-            <h4 class="m-b-lg">Product List</h4>
+            <h4 class="m-b-lg">Varian Product List</h4>
             <div class="d-flex">
                 <div class="mb-4 d-flex">
                     <div class="form-group">
                         <label for="control-dem1o-6">Select a Product</label>
                         <div id="control-demo-6">
-                            <input type="text" class="form-control" id="product" list="productname" value="{{product_name}}">
+                            <input type="text" class="form-control" id="product" list="productname" value="{{product_sku}}">
                             <datalist id="productname">
                                 {% for product in products %}
-                                    <option data-value="{% url 'inventory-varian-product' %}?product_id={{product.id}}">{{product.name}}</option>
+                                    <option data-value="{% url 'inventory-varian-product' %}?product_id={{product.id}}">{{product.sku}}</option>
                                 {% endfor %}
                             </datalist>
                         </div>
@@ -31,18 +31,24 @@
                     <th>Sell Price</th>
                     <th>Aksi</th>
                 </tr>
-                {% for object in varian_products %}
-                    <tr>
-                        <td>{{object.varian_attribute}}</td>
-                        <td>{{object.varian_value}}</td>
-                        <td>{{object.buy_price}}</td>
-                        <td>{{object.sell_price}}</td>
-                        <td>
-                            <a href={% url 'inventory-update-varian-product' object.id %} class="btn btn-secondary">Update</a>
-                            <button class="btn btn-danger ml-2" onClick="deleteVarianProduct('{% url 'inventory-delete-varian-product' object.id %}', '{{object.varian_attribute}}: {{object.varian_value}}')">Hapus</button>
-                        </td>
-                    </tr>
-                {% endfor %}
+                {% if varian_products %}
+                    {% for object in varian_products %}
+                        <tr>
+                            <td>{{object.varian_attribute}}</td>
+                            <td>{{object.varian_value}}</td>
+                            <td>{{object.buy_price}}</td>
+                            <td>{{object.sell_price}}</td>
+                            <td>
+                                <a href={% url 'inventory-update-varian-product' object.id %} class="btn btn-secondary">Update</a>
+                                <button class="btn btn-danger ml-2" onClick="deleteVarianProduct('{% url 'inventory-delete-varian-product' object.id %}', '{{object.varian_attribute}}: {{object.varian_value}}')">Hapus</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <div>
+                        <p>Varian not found. Please click the 'Add Varian' button to add new item.</p>
+                    </div>
+                {% endif %}
             </table>
         </div>
     </div>

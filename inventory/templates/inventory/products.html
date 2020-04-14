@@ -6,16 +6,23 @@
             <h4 class="m-b-lg">Product List</h4>
             <div class="d-flex">
                 <div class="mb-4 d-flex">
-                    <div class="form-group">
-                        <label for="control-demo-6" class="col-sm-3">Warehouse</label>
-                        <div id="control-demo-6" class="col-sm-12">
-                            <select class="form-control">
-                                {% for warehouse in warehouses %}
-                                    <option>{{warehouse.name}}</option>
-                                {% endfor %}                            
-                            </select>
+                    {% if user.is_superuser %}
+                        <div class="form-group">
+                            <label for="control-demo-6" class="col-sm-3">Warehouse</label>
+                            <div id="control-demo-6" class="col-sm-12">
+                                <select class="form-control" onchange="location = this.value;">
+                                    {% for warehouse in warehouses %}
+                                        <option 
+                                            {% if warehouse.name == warehouse_name %} selected {% endif %} 
+                                            value="{% url 'inventory-products' %}?warehouse_id={{warehouse.id}}"
+                                        >
+                                            {{warehouse.name}}
+                                        </option>
+                                    {% endfor %}                            
+                                </select>
+                            </div>
                         </div>
-                    </div>
+                    {% endif %}
                     <div class="form-group">
                         <label for="search" class="col-sm-3">Search</label>
                         <div class="col-sm-12">
@@ -35,8 +42,6 @@
                         <th>Nama</th>
                         <th>SKU/Kode</th>
                         <th>Kategori</th>
-                        <th>Stok</th>
-                        <th>Jumlah Varian</th>
                         <th>Terakhir diperbarui</th>
                         <th>Aksi</th>
                     </tr>
@@ -49,10 +54,9 @@
                             <td>{{product.name}}</td>
                             <td>{{product.sku}}</td>
                             <td>{{product.category.name}}</td>
-                            <td>{{product.stock}}</td>
-                            <td>1</td>
                             <td>{{product.last_modified}}</td>
                             <td>
+                                <a href="{% url 'inventory-varian-product' %}?product_id={{product.id}}" class="btn btn-success">See Varian</a>
                                 <a href={% url 'inventory-update-product' product.id %} class="btn btn-secondary">Update</a>
                                 <button class="btn btn-danger ml-2" onClick="deleteProduct('{% url 'inventory-delete-product' product.id %}', '{{product.name}}')">Hapus</button>
                             </td>

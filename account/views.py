@@ -63,7 +63,7 @@ class CreateWarehouse(UserPassesTestMixin, CreateView):
 
     def form_valid(self, form, *args, **kwargs):
         form.instance.owner = self.request.user
-        return super(CreateVarianProduct, self).form_valid(form)
+        return super(CreateWarehouse, self).form_valid(form)
 
 class UpdateWarehouse(UserPassesTestMixin, UpdateView):
     model = Warehouse
