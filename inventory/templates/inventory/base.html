@@ -41,7 +41,7 @@
             <a href={% url 'inventory-varian-product' %} class="nav-link" data-parent="#inventory-tab">Varian Product</a>
             <a href={% url 'inventory-categories' %} class="nav-link" data-parent="#inventory-tab">Kategori</a>
         </li>
-        <li class="nav-item"><a href={% url 'inventory-invoices' %} class="nav-link"><i class="fa fa-money-bill-alt"></i>Invoice</a></li>
+        <li class="nav-item"><a href={% url 'invoice-list' %} class="nav-link"><i class="fa fa-money-bill-alt"></i>Invoice</a></li>
         {% if user.is_superuser %}
           <li class="nav-item"><a href={% url 'account-manage-accounts' %} class="nav-link"><i class="fa fa-users"></i>Manage Accounts</a></li>
         {% endif %}

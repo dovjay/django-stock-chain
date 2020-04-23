@@ -36,6 +36,7 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
 INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'inventory.apps.InventoryConfig',
+    'invoice.apps.InvoiceConfig',
     'django_cleanup.apps.CleanupConfig',
     'django.contrib.admin',
     'django.contrib.auth',

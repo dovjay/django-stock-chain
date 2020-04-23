@@ -11,18 +11,22 @@ def dashboard(request):
 
 def products(request):
     if request.user.is_superuser:
+
         if request.GET.get('warehouse_id'):
             warehouse = Warehouse.objects.get(pk=request.GET.get('warehouse_id'))
             warehouses = Warehouse.objects.all()
-            products = Product.objects.filter(warehouse=warehouse)
+
         else:
             warehouses = Warehouse.objects.all()
             warehouse = warehouses[0]
-            products = Product.objects.filter(warehouse=warehouse)
+
+        products = Product.objects.filter(warehouse=warehouse)
+
     else:
         permission = PermissionWarehouse.objects.get(user=request.user)
         warehouse = Warehouse.objects.get(warehouse=permission.warehouse)
         products = Product.objects.filter(warehouse=permission.warehouse)
+        
     context = {
         'products': products,
         'warehouses': warehouses,
@@ -107,9 +111,6 @@ class UpdateVarianProduct(UpdateView):
 class DeleteVarianProduct(DeleteView):
     model = VarianProduct
     success_url = reverse_lazy('inventory-varian-product')
-
-def invoices(request):
-    return render(request, 'inventory/invoices.html')
 
 def categories(request):
     categories = Category.objects.all()
