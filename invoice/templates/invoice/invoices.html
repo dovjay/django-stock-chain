@@ -42,14 +42,19 @@
                 <table class="table table-hover">
                     <tr>
                         <th>No</th>
+                        <th>Customer</th>
                         <th>Status</th>
+                        <th>Total</th>
                         <th>Aksi</th>
                     </tr>
                     {% for invoice in invoices %}
                         <tr>
                             <td>{{invoice.invoice_no}}</td>
+                            <td>{{invoice.customer|default:'-'}}</td>
                             <td>{{invoice.status}}</td>
+                            <td>{{invoice.get_total}}</td>
                             <td>
+                                <a href={% url 'invoice-generate-pdf' invoice.id %} class="btn btn-warning">Print</a>
                                 <a href={% url 'invoice-form' invoice.id %} class="btn btn-secondary">Update</a>
                                 <button class="btn btn-danger ml-2" onClick="deleteInvoice('{% url 'invoice-delete' invoice.id %}', '{{invoice.invoice_no}}')">Hapus</button>
                             </td>

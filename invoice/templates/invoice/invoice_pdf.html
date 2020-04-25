@@ -1,0 +1,100 @@
+<html>
+<head>
+    <style>
+        body {
+            width: 595px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            font-family: sans-serif !important;
+            font-size: 0.8em !important;
+        }
+
+        .title {
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .table {
+            font-size: 1.2em !important;
+        }
+
+        .container {
+            border: 1px solid black !important;
+            padding: 15px !important;
+            height: 842px !important;
+        }
+
+        @page {
+            size: A4 portrait;
+        }
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="d-flex">
+            <div class="p-2 w-50">
+                <div class="title">{{warehouse.name}}</div>
+                <div>{{warehouse.address1}}</div>
+                <div>{{warehouse.address2}}</div>
+                <div>{{warehouse.city}} - {{warehouse.province}}</div>
+                <div>{{warehouse.nation}}</div>
+            </div>
+            <div class="p-2 w-50 text-right">
+                <div class="title">{{invoice.invoice_no}}</div>
+                <div>Date: {{ invoice.updated|date:'j F, Y' }}</div>
+                <div>Due: {{invoice.due|date:'j F, Y'}}</div>
+                <div>Status: <span class="font-weight-bold">{{invoice.status}}</span></div>
+            </div>
+        </div>
+        <div class="border p-3 mt-2">
+            <div class="title">To:</div>
+            <div>{{invoice.customer}}</div>
+        </div>
+        <div class="mt-2">
+            <table class="table">
+                <tr>
+                    <th>Nama</th>
+                    <th>SKU</th>
+                    <th>Varian</th>
+                    <th>Qty</th>
+                    <th>Total</th>
+                </tr>
+                {% for item in invoiceitems %}
+                    <tr>
+                        <td>{{item.name}}</td>
+                        <td>{{item.sku}}</td>
+                        <td>{{item.varian_product.varian_attribute}}: {{item.varian_product.varian_value}}</td>
+                        <td>{{item.quantity}}</td>
+                        <td id="subtotal-{{ item.id }}">{{item.get_subtotal}}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <div class="d-flex">
+                <div class="w-50 mt-2">
+                    <div class="title">Notes:</div>
+                    <div class="mr-3">
+                        {{item.notes|default:'-'}}
+                    </div>
+                </div>
+                <div class="w-50">
+                    <table class="table border">
+                        <tr>
+                            <td>Sub Total</td>
+                            <td>Rp {{ subtotal }}</td>
+                        </tr>
+                        <tr>
+                            <td>Discount</td>
+                            <td>Rp {{ invoice.get_discount }}</td>
+                        </tr>
+                        <tr class="font-weight-bold">
+                            <td>Total</td>
+                            <td>Rp {{ invoice.get_total }}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

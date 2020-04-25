@@ -33,7 +33,7 @@
                 </select>
                 <label for="customer">Customer</label>
                 <input class="form-control mb-3" list="customerList" oninput="$('#customer').val(this.value)" value="{{invoice.customer|default:''}}" />
-                <input class="form-control mb-3" id="customer" name="customer" hidden="true" value="{{invoice.status}}" />
+                <input class="form-control mb-3" id="customer" name="customer" hidden="true" value="{{invoice.customer}}" />
                 <datalist id="customerList">
                     {% for item in customers %}
                         <option value="{{ item.name }}"></option>
@@ -133,7 +133,8 @@
             const items = $("tr[id^='item-']")
             for (const el of items) {
                 const price = $(el).find("input[id^='sellPrice-']").val()
-                subTotal += Number(price)
+                const qty = $(el).find("input[id^='qty-']").val()
+                subTotal += Number(price) * Number(qty)
             }
 
             discount = Math.round(subTotal * discount)
@@ -141,7 +142,7 @@
             $('#subTotal').text(`Rp ${subTotal}`)
             $('#discountTotal').text(`Rp ${discount}`)
             $('#total').text(`Rp ${total}`)
-            $("input[name='total']").val(total)
+            $("input[name='total']").val(subTotal)
         }
 
         function selectSKU() {

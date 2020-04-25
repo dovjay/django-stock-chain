@@ -2,11 +2,13 @@ from django.urls import reverse
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.db.models import F
+from django.template.loader import get_template
 from .models import Invoice, InvoiceItem
 from .forms import InvoiceForm, InvoiceItemForm
 from account.models import Warehouse, Contact
 from inventory.models import VarianProduct, Product
 from django.forms.models import model_to_dict
+from weasyprint import HTML, CSS
 
 # Create your views here.
 def invoices(request):
@@ -109,3 +111,46 @@ def delete_invoice_item(request, pk):
             message: 'Item successfully deleted'
         }
         return JsonResponse(data)
+
+def generate_invoice_pdf(request, pk):
+    invoice = Invoice.objects.get(pk=pk)
+    invoiceitems = InvoiceItem.objects.filter(invoice=invoice)
+    warehouse = Warehouse.objects.get(pk=invoice.warehouse.id)
+
+    subtotal = 0
+    for item in invoiceitems:
+        subtotal += item.get_subtotal()
+
+    context = {
+        'invoice': invoice,
+        'invoiceitems': invoiceitems,
+        'warehouse': warehouse,
+        'subtotal': subtotal
+    }
+
+    # render template into pdf and send to user
+    html_template = get_template('invoice/invoice_pdf.html')
+    html = html_template.render(context).encode(encoding='UTF-8')
+    pdf_file = HTML(string=html).write_pdf()
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = f'filename="{invoice.invoice_no}.pdf"'
+    return response
+
+# remove this after the template done
+def invoice_example(request, pk):
+    invoice = Invoice.objects.get(pk=pk)
+    invoiceitems = InvoiceItem.objects.filter(invoice=invoice)
+    warehouse = Warehouse.objects.get(pk=invoice.warehouse.id)
+
+    subtotal = 0
+    for item in invoiceitems:
+        subtotal += item.get_subtotal()
+
+    context = {
+        'invoice': invoice,
+        'invoiceitems': invoiceitems,
+        'warehouse': warehouse,
+        'subtotal': subtotal
+    }
+    
+    return render(request, 'invoice/invoice_pdf.html', context)

@@ -42,6 +42,12 @@ class Invoice(models.Model):
     def __str__(self):
         return self.invoice_no
 
+    def get_discount(self):
+        return round(self.total * (self.discount * 0.01))
+
+    def get_total(self):
+        return self.total - self.get_discount()
+
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
     varian_product = models.ForeignKey(VarianProduct, on_delete=models.SET_NULL, null=True)
@@ -52,3 +58,6 @@ class InvoiceItem(models.Model):
 
     def __str__(self):
         return f'{self.invoice} - {self.varian_product}'
+
+    def get_subtotal(self):
+        return self.price * self.quantity
