@@ -1,10 +1,10 @@
 from django.urls import reverse
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.db.models import F
 from .models import Invoice, InvoiceItem
 from .forms import InvoiceForm, InvoiceItemForm
-from account.models import Warehouse
+from account.models import Warehouse, Contact
 from inventory.models import VarianProduct, Product
 from django.forms.models import model_to_dict
 
@@ -37,18 +37,31 @@ def invoices(request):
 def create_invoice(request, warehouse_id):
     warehouse = Warehouse.objects.get(pk=warehouse_id)
     invoice = Invoice.objects.create(warehouse=warehouse)
-    return redirect(reverse('invoice-create-form', kwargs={'invoice_id': invoice.id }))
+    return redirect(reverse('invoice-form', kwargs={'invoice_id': invoice.id }))
 
-def create_invoice_form(request, invoice_id):
+def invoice_form(request, invoice_id):
+    alert = ''
+    if request.method == "POST":
+        invoice = Invoice.objects.get(pk=invoice_id)
+        form = InvoiceForm(request.POST, instance=invoice)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('invoice-list'))
+        else:
+            alert = str(form.errors)
+    
     invoice = Invoice.objects.get(pk=invoice_id)
     products = Product.objects.filter(warehouse=invoice.warehouse)
     invoiceItems = InvoiceItem.objects.filter(invoice=invoice)
+    customers = Contact.objects.filter(owner=invoice.warehouse.owner)
     form = InvoiceForm(instance=invoice)
     context = {
         'invoice': invoice,
         'form': form,
         'products': products,
-        'invoiceitems': invoiceItems
+        'invoiceitems': invoiceItems,
+        'customers': customers,
+        'alert': alert
     }
     return render(request, 'invoice/invoice_form.html', context)
 

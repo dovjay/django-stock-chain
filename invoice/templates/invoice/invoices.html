@@ -50,7 +50,7 @@
                             <td>{{invoice.invoice_no}}</td>
                             <td>{{invoice.status}}</td>
                             <td>
-                                {% comment %} <a href={% url 'invoice-update' invoice.id %} class="btn btn-secondary">Update</a> {% endcomment %}
+                                <a href={% url 'invoice-form' invoice.id %} class="btn btn-secondary">Update</a>
                                 <button class="btn btn-danger ml-2" onClick="deleteInvoice('{% url 'invoice-delete' invoice.id %}', '{{invoice.invoice_no}}')">Hapus</button>
                             </td>
                         </tr>
