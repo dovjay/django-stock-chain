@@ -1,0 +1,109 @@
+{% extends "inventory/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="widget p-lg">
+            <h4 class="m-b-lg">Invoices</h4>
+            <div class="mb-4 d-flex">
+                <div>
+                    {% if user.is_superuser %}
+                        <div class="form-group">
+                            <label for="control-demo-6" class="col-sm-3">Warehouse</label>
+                            <div id="control-demo-6" class="col-sm-12">
+                                <select class="form-control" onchange="location = this.value;">
+                                    {% for wh in warehouses %}
+                                        <option 
+                                            {% if wh.name == warehouse.name %} selected {% endif %} 
+                                            value="{% url 'invoice-list' %}?warehouse_id={{wh.id}}"
+                                        >
+                                            {{wh.name}}
+                                        </option>
+                                    {% endfor %}                            
+                                </select>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="d-flex">
+                    <div class="form-group">
+                        <label for="search" class="col-sm-3">Search</label>
+                        <div class="col-sm-12">
+                            <input  type="text" id="search" class="form-control" placeholder="Cari">
+                        </div>
+                    </div>
+                </div>
+                <div class="ml-auto">
+                    <a href={% url 'invoice-create' warehouse.id %} class="btn btn-primary">Add Invoice</a>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <tr>
+                        <th>No</th>
+                        <th>Customer</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th>Aksi</th>
+                    </tr>
+                    {% for invoice in invoices %}
+                        <tr>
+                            <td>{{invoice.invoice_no}}</td>
+                            <td>{{invoice.customer|default:'-'}}</td>
+                            <td>{{invoice.status}}</td>
+                            <td>{{invoice.get_total}}</td>
+                            <td>
+                                <a href={% url 'invoice-generate-pdf' invoice.id %} class="btn btn-warning">Print</a>
+                                <a href={% url 'invoice-form' invoice.id %} class="btn btn-secondary">Update</a>
+                                <button class="btn btn-danger ml-2" onClick="deleteInvoice('{% url 'invoice-delete' invoice.id %}', '{{invoice.invoice_no}}')">Hapus</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block script %}
+    <script>
+        function deleteInvoice(url, name) {
+            $.ajaxSetup({ 
+                beforeSend: function(xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                } 
+            })
+
+            message = "Kamu yakin ingin menghapus invoice ini? " + name
+            confirm_delete = confirm(message)
+            if (confirm_delete) {
+                $.ajax({
+                    url: url,
+                    method: "POST",
+                    success: function() {
+                        location.reload()
+                    }
+                })
+            }
+        }
+    </script>
+{% endblock script %}

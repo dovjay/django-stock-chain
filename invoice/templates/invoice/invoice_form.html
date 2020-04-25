@@ -1,0 +1,303 @@
+{% extends "inventory/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    {% if form.errors %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <div class="alert alert-danger">
+                    <strong>{{ error|escape }}</strong>
+                </div>
+            {% endfor %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+            <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if alert %}
+        <div class="alert-danger p-3 m-3">{{alert}}</div>
+    {% endif %}
+
+    <h2>{{invoice.invoice_no}}</h2>
+    <form method="POST" action="{% url 'invoice-form' invoice.id %}" enctype="multipart/form-data">{% csrf_token %}
+        <div class="d-flex">
+            <div class="form-group col-md-6">
+                <label for="status">Status</label>
+                <select class="form-control mb-3" name="status" value="{{invoice.status}}">
+                    <option value="DRAFT">Draft</option>
+                    <option value="DEBT">Debt</option>
+                    <option value="PAID">Paid</option>
+                </select>
+                <label for="customer">Customer</label>
+                <input class="form-control mb-3" list="customerList" oninput="$('#customer').val(this.value)" value="{{invoice.customer|default:''}}" />
+                <input class="form-control mb-3" id="customer" name="customer" hidden="true" value="{{invoice.customer}}" />
+                <datalist id="customerList">
+                    {% for item in customers %}
+                        <option value="{{ item.name }}"></option>
+                    {% endfor %}
+                </datalist>
+            </div>
+            <div class="form-group col-md-6">
+                <label for="due">Due</label>
+                <input class="form-control mb-3" type="date" name="due" value="{{invoice.due|date:'Y-m-d'}}" required>
+                <label for="paid_date">Paid Date</label>
+                <input class="form-control mb-3" type="date" value="{{invoice.paid_date|date:'Y-m-d'}}" name="paid_date">
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover" id="itemTable">
+                <tr>
+                    <th>SKU</th>
+                    <th>Varian Product</th>
+                    <th>Price</th>
+                    <th>Qty
+                    <th>Aksi</th>
+                </tr>
+                {% for item in invoiceitems %}
+                    <tr id="item-{{ item.id }}">
+                        <td><input id="productList-{{ item.id }}" class="form-control" type="text" disabled value={{ item.sku }}></td>
+                        <td><input id="varianProductList-{{ item.id }}" class="form-control" type="text" disabled value="{{ item.varian_product.varian_attribute }}: {{ item.varian_product.varian_value }}"></td>
+                        <td><input id="sellPrice-{{ item.id }}" class="form-control" type="text" disabled value={{ item.price }}></td>
+                        <td><input id="qty-{{ item.id }}" class="form-control" type="text" disabled value={{ item.quantity }}></td>
+                        <td id="action-item-{{ item.id }}">
+                            <button class="btn btn-danger ml-2" onClick="deleteItem('{% url 'invoice-delete-invoice-item' item.id %}', '{{item.varian_product.product.sku}}')">Hapus</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <button type="button" id="addItemButton" class="btn btn-success" onClick="addItem()">Add Item</button>
+        </div>
+        <hr>
+        <div class="d-flex">
+            <div class="form-group col-md-6">
+                <label for="discount">Discount (in percentage)</label>
+                <input class="form-control mb-3" id="discount" type="number" min="0" max="100" value="{{invoice.discount|default:0}}" name="discount" oninput="countTotal()">
+                <label for="notes">Notes:</label>
+                <textarea class="form-control mb-3" rows="5" name="notes"></textarea>
+            </div>
+            <div class="ml-auto w-25">
+                <table class="col-md-6 table">
+                    <tr>
+                        <td>Subtotal</td>
+                        <td id="subTotal">Rp0</td>
+                    </tr>
+                    <tr>
+                        <td>Discount</td>
+                        <td id="discountTotal">Rp0</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold">Total</td>
+                        <td id="total" class="font-weight-bold">Rp0</td>
+                    </tr>
+                </table>
+                <input name="total" hidden="true" type="number">
+            </div>
+        </div>
+        <hr>
+        <div class="mt-5">
+            <button type="button" class="btn btn-danger" onClick="goBack()">Batal</button>
+            <button type="submit" class="btn btn-success">Simpan</button>
+        </div>
+    </form>
+{% endblock content %}
+
+{% block script %}
+    <script>
+        // start function when load this page
+        countTotal()
+        $("input[name='due']").attr('min', formatDate(Date.now()))
+
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2) 
+                month = '0' + month;
+            if (day.length < 2) 
+                day = '0' + day;
+
+            return [year, month, day].join('-');
+        }
+
+        function countTotal() {
+            let subTotal = 0
+            let discount = $('#discount').val() * 0.01
+            let total = 0
+
+            // count subTotal price
+            const items = $("tr[id^='item-']")
+            for (const el of items) {
+                const price = $(el).find("input[id^='sellPrice-']").val()
+                const qty = $(el).find("input[id^='qty-']").val()
+                subTotal += Number(price) * Number(qty)
+            }
+
+            discount = Math.round(subTotal * discount)
+            total = subTotal - discount
+            $('#subTotal').text(`Rp ${subTotal}`)
+            $('#discountTotal').text(`Rp ${discount}`)
+            $('#total').text(`Rp ${total}`)
+            $("input[name='total']").val(subTotal)
+        }
+
+        function selectSKU() {
+            var input = $(this.event.target),
+                options = $('#' + input.attr('list') + ' option'),
+                label = input.val()
+
+            for(var i = 0; i < options.length; i++) {
+                var option = options.eq(i)
+                if(option.text() === label) {
+
+                    // add some get varian product function
+                    let product_id = option.attr('data-value')
+                    let url = `{% url 'invoice-varian-product-list' 321 %}`.replace(/321/, product_id.toString())
+                    let itemId = this.event.target.id.split('-')[1]
+                    $.get(url, function(data, status){
+                        $(`#varianProductList-${itemId}`).empty()
+                        $(`#varianProductList-${itemId}`).append(`<option value="">-------------</option>`)
+                        let { varian_products } = data
+                        for (let i = 0; i < varian_products.length; i++) {
+                            let { varian_value, varian_attribute, sell_price, stock, product__name, id } = varian_products[i]
+                            let value = {
+                                "price": sell_price, 
+                                "stock": stock, 
+                                "itemId": itemId,
+                                "id": id,
+                                "product_name": product__name
+                            }
+                            $(`#varianProductList-${itemId}`).append(`<option value='${JSON.stringify(value)}'>${varian_attribute}: ${varian_value}</option>`)
+                        }
+                    });
+                    break
+                }
+            }
+        }
+
+        function selectVarian(value) {
+            let varian = JSON.parse(value)
+            $(`#sellPrice-${varian.itemId}`).val(varian.price)
+            $(`#qty-${varian.itemId}`).prop('max', varian.stock)
+            $(`#qty-${varian.itemId}`).prop('placeholder', `Max: ${varian.stock}`)
+        }
+
+        function goBack() {
+            window.location = "{% url 'invoice-list' %}"
+        }
+
+        function saveItem(event, url) {
+            event.preventDefault()
+            const itemId = event.target.id.split('-')[1]
+            const varian = JSON.parse($(`#varianProductList-${itemId}`).val())
+            const sku = $(`#productList-${itemId}`).val()
+            const price = $(`#sellPrice-${itemId}`).val()
+            const quantity = $(`#qty-${itemId}`)
+
+            if (quantity.prop('max') < quantity.val()) {
+                alert("Quantity exceeding maximum stock in inventory!")
+                return false
+            }
+            const invoice = {{ invoice.id }}
+            const data = {
+                'invoice': invoice,
+                'varian_product': varian.id,
+                'name': varian.product_name,
+                'sku': sku,
+                'price': price,
+                'quantity': quantity.val()
+            }
+            let validated = true
+            // Check if there is null val in input before saving item
+            for (prop in data) {
+                if (!data[prop]) {
+                    alert('Please fill all the input')
+                    validated = false
+                    break
+                }
+            }
+            getCookie()
+            jQuery.post(url, data, (data) => {
+                location.reload()
+            })
+        }
+
+        function addItem() {
+            $("#addItemButton").hide()
+            const time = Date.now()
+            localStorage.setItem('isNewItem', true)
+            $("#itemTable").append(`<tr id="item-${time}">
+                    <td>
+                        <input type="text" class="form-control" id="productList-${time}" list="productsku" value="" oninput="selectSKU()">
+                        <datalist id="productsku">
+                            {% for product in products %}
+                                <option data-value="{{product.id}}">{{product.sku}}</option>
+                            {% endfor %}
+                        </datalist>
+                    </td>
+                    <td>
+                        <select class="form-control" id="varianProductList-${time}" onchange="selectVarian(this.value)">
+                        </select>
+                    </td>
+                    <td><input class="form-control" type="number" id="sellPrice-${time}" min="0"></td>
+                    <td><input class="form-control" type="number" id="qty-${time}" min="1"></td>
+                    <td>
+                        <button class="btn btn-secondary ml-2" id="saveItem-${time}" onClick="saveItem(event, '{% url 'invoice-save-invoice-item' invoice.id %}')">Save</button>
+                        <button class="btn btn-danger ml-2" onClick="cancelAddItem(event, ${time})">Cancel</button>
+                    </td>
+                </tr>`)
+        }
+
+        function cancelAddItem(event, id) {
+            event.preventDefault()
+            $(`#item-${id}`).remove()
+            $("#addItemButton").show()
+        }
+
+        function deleteItem(url, name) {
+            message = "Kamu yakin ingin menghapus item ini? " + name
+            confirm_delete = confirm(message)
+            if (confirm_delete) {
+                getCookie()
+                $.ajax({
+                    url: url,
+                    method: "POST",
+                    success: function() {
+                        alert(JSON.stringify(data))
+                        location.reload()
+                    }
+                })
+            }
+        }
+
+        function getCookie() {
+            $.ajaxSetup({ 
+                beforeSend: function(xhr, settings) {
+                    function getCookie(name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie != '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = jQuery.trim(cookies[i]);
+                                // Does this cookie string begin with the name we want?
+                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        // Only send the token to relative URLs i.e. locally.
+                        xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    }
+                } 
+            })
+        }
+    </script>
+{% endblock script %}

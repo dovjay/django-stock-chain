@@ -3,7 +3,6 @@ from . import views
 
 urlpatterns = [
     path('', views.dashboard, name='inventory-dashboard'),
-    path('invoices/', views.invoices, name='inventory-invoices'),
     path('varian-product/', views.varian_product, name='inventory-varian-product'),
     path('create-varian-product/<int:project_id>/', views.CreateVarianProduct.as_view(), name='inventory-create-varian-product'),
     path('update-varian-product/<int:pk>/', views.UpdateVarianProduct.as_view(), name='inventory-update-varian-product'),
