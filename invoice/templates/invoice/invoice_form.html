@@ -108,7 +108,10 @@
     <script>
         // start function when load this page
         countTotal()
-        $("input[name='due']").attr('min', formatDate(Date.now()))
+        const dueDate = "{{ invoice.due }}"
+        if (!dueDate) {
+            $("input[name='due']").attr('min', formatDate(Date.now()))
+        }
 
         function formatDate(date) {
             var d = new Date(date),
@@ -198,7 +201,7 @@
             const price = $(`#sellPrice-${itemId}`).val()
             const quantity = $(`#qty-${itemId}`)
 
-            if (quantity.prop('max') < quantity.val()) {
+            if (Number(quantity.prop('max')) < Number(quantity.val())) {
                 alert("Quantity exceeding maximum stock in inventory!")
                 return false
             }
@@ -259,6 +262,7 @@
         }
 
         function deleteItem(url, name) {
+            this.event.preventDefault()
             message = "Kamu yakin ingin menghapus item ini? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
@@ -266,8 +270,8 @@
                 $.ajax({
                     url: url,
                     method: "POST",
-                    success: function() {
-                        alert(JSON.stringify(data))
+                    success: function(data) {
+                        alert(data.message)
                         location.reload()
                     }
                 })

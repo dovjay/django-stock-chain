@@ -1,13 +1,26 @@
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.db.models import Q, Sum
+from django.db.models.functions import Trim
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from .forms import ProductForm, ProductSUForm, VarianProductForm, CategoryForm
 from .models import Category, Product, VarianProduct
 from account.models import Warehouse, PermissionWarehouse
+from invoice.models import InvoiceItem, Invoice
 
 # Create your views here.
 def dashboard(request):
-    return render(request, 'inventory/dashboard.html')
+    total_orders = Invoice.objects.filter(~Q(status="DRAFT")).count()
+    orders_paid = Invoice.objects.filter(status="PAID").count()
+    orders_indebt = Invoice.objects.filter(status="DEBT").count()
+    products = InvoiceItem.objects.values('varian_product__product__name', 'varian_product__product__sku').order_by('varian_product__product__sku').annotate(total_order=Sum('quantity'))[:10]
+    context = {
+        'total_orders': total_orders,
+        'orders_paid': orders_paid,
+        'orders_indebt': orders_indebt,
+        'products': products
+    }
+    return render(request, 'inventory/dashboard.html', context)
 
 def products(request):
     if request.user.is_superuser:

@@ -16,7 +16,7 @@ def invoices(request):
         if request.GET.get('warehouse_id'):
             warehouse = Warehouse.objects.get(pk=request.GET.get('warehouse_id'))
             warehouses = Warehouse.objects.all()
-            invoices = Invoice.objects.filter(warehouse=warehouse)
+            invoices = Invoice.objects.filter(warehouse=warehouse).order_by('-invoice_no')
         else:
             warehouses = Warehouse.objects.all()
             warehouse = warehouses[0]
@@ -28,7 +28,7 @@ def invoices(request):
         permission = PermissionWarehouse.objects.get(user=request.user)
         warehouse = Warehouse.objects.get(pk=permission.warehouse.pk)
         warehouses = warehouse
-        invoices = Invoice.objects.filter(warehouse=permission.warehouse)
+        invoices = Invoice.objects.filter(warehouse=permission.warehouse).order_by('-invoice_no')
 
     context = {
         'invoices': invoices,
@@ -109,7 +109,7 @@ def delete_invoice_item(request, pk):
         varian.save()
         item.delete()
         data = {
-            message: 'Item successfully deleted'
+            'message': 'Item successfully deleted'
         }
         return JsonResponse(data)
 

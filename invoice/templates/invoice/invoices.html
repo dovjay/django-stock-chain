@@ -49,6 +49,7 @@
                         <th>No</th>
                         <th>Customer</th>
                         <th>Status</th>
+                        <th>Due</th>
                         <th>Total</th>
                         <th>Aksi</th>
                     </tr>
@@ -57,6 +58,7 @@
                             <td>{{invoice.invoice_no}}</td>
                             <td>{{invoice.customer|default:'-'}}</td>
                             <td>{{invoice.status}}</td>
+                            <td>{{invoice.due}}</td>
                             <td>{{invoice.get_total}}</td>
                             <td>
                                 {% if invoice.status != 'DRAFT' %}

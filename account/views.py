@@ -10,8 +10,12 @@ from .forms import ContactForm, PermissionWarehouseForm, WarehouseForm, AccountF
 # Create your views here.
 def contacts(request):
     contacts = Contact.objects.all()
+    customer_count = Contact.objects.filter(is_customer=True).count()
+    supplier_count = Contact.objects.filter(is_supplier=True).count()
     context = {
-        'contacts': contacts
+        'contacts': contacts,
+        'customer_count': customer_count,
+        'supplier_count': supplier_count
     }
     return render(request, 'account/contacts.html', context)
 
