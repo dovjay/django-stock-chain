@@ -24,15 +24,20 @@ def products(request):
 
     else:
         permission = PermissionWarehouse.objects.get(user=request.user)
-        warehouse = Warehouse.objects.get(warehouse=permission.warehouse)
         products = Product.objects.filter(warehouse=permission.warehouse)
+        warehouse = Warehouse.objects.get(pk=permission.warehouse.pk)
+        warehouses = warehouse
         
     context = {
         'products': products,
         'warehouses': warehouses,
+        'warehouse': warehouse,
         'warehouse_name': warehouse.name
     }
-    return render(request, 'inventory/products.html', context)
+
+    response = render(request, 'inventory/products.html', context)
+    response.set_cookie('warehouse_id', warehouse.id)
+    return response
 
 class CreateProduct(CreateView):
     model = Product
@@ -74,11 +79,14 @@ def varian_product(request):
         product_sku = ''
         varian_products = None
 
-    products = Product.objects.all()
+    warehouse = Warehouse.objects.get(pk=request.COOKIES.get('warehouse_id'))
+    products = Product.objects.filter(warehouse=warehouse)
+
     context = {
         'products': products,
         'varian_products': varian_products,
-        'product_sku': product_sku
+        'product_sku': product_sku,
+        'warehouse': warehouse
     }
     return render(request, 'inventory/varian_product.html', context)
 

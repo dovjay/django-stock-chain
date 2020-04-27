@@ -5,7 +5,7 @@ from django.db.models import F
 from django.template.loader import get_template
 from .models import Invoice, InvoiceItem
 from .forms import InvoiceForm, InvoiceItemForm
-from account.models import Warehouse, Contact
+from account.models import Warehouse, Contact, PermissionWarehouse
 from inventory.models import VarianProduct, Product
 from django.forms.models import model_to_dict
 from weasyprint import HTML, CSS
@@ -26,7 +26,8 @@ def invoices(request):
 
     else:
         permission = PermissionWarehouse.objects.get(user=request.user)
-        warehouse = Warehouse.objects.get(warehouse=permission.warehouse)
+        warehouse = Warehouse.objects.get(pk=permission.warehouse.pk)
+        warehouses = warehouse
         invoices = Invoice.objects.filter(warehouse=permission.warehouse)
 
     context = {

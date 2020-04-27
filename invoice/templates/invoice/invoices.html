@@ -23,6 +23,11 @@
                                 </select>
                             </div>
                         </div>
+                    {% else %}
+                        <div class="form-group d-flex flex-column">
+                            <label for="wh">Warehouse</label>
+                            <input value="{{warehouse.name}}" class="form-control" disabled />
+                        </div>
                     {% endif %}
                 </div>
                 <div class="d-flex">
@@ -54,7 +59,9 @@
                             <td>{{invoice.status}}</td>
                             <td>{{invoice.get_total}}</td>
                             <td>
-                                <a href={% url 'invoice-generate-pdf' invoice.id %} class="btn btn-warning">Print</a>
+                                {% if invoice.status != 'DRAFT' %}
+                                    <a href={% url 'invoice-generate-pdf' invoice.id %} class="btn btn-warning">Print</a>
+                                {% endif %}
                                 <a href={% url 'invoice-form' invoice.id %} class="btn btn-secondary">Update</a>
                                 <button class="btn btn-danger ml-2" onClick="deleteInvoice('{% url 'invoice-delete' invoice.id %}', '{{invoice.invoice_no}}')">Hapus</button>
                             </td>

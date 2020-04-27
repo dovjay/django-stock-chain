@@ -78,15 +78,17 @@
                             <th>Aksi</th>
                         </tr>
                         {% for account in accounts %}
-                            <tr>
-                                <td>{{account.id}}</td>
-                                <td>{{account.username}}</td>
-                                <td>{{account.email}}</td>
-                                <td>
-                                    <a href={% url 'account-update-account' account.id %} class="btn btn-secondary">Update</a>
-                                    <button class="btn btn-danger ml-2" onClick="deleteAccount('{% url 'account-delete-account' account.id %}', '{{account.username}}')">Delete</button>
-                                </td>
-                            </tr>
+                            {% if not account.is_superuser %}
+                                <tr>
+                                    <td>{{account.id}}</td>
+                                    <td>{{account.username}}</td>
+                                    <td>{{account.email}}</td>
+                                    <td>
+                                        <a href={% url 'account-update-account' account.id %} class="btn btn-secondary">Update</a>
+                                        <button class="btn btn-danger ml-2" onClick="deleteAccount('{% url 'account-delete-account' account.id %}', '{{account.username}}')">Delete</button>
+                                    </td>
+                                </tr>
+                            {% endif %}
                         {% endfor %}
                     </table>
                 </div>

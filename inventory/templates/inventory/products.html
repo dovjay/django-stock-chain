@@ -11,16 +11,21 @@
                             <label for="control-demo-6" class="col-sm-3">Warehouse</label>
                             <div id="control-demo-6" class="col-sm-12">
                                 <select class="form-control" onchange="location = this.value;">
-                                    {% for warehouse in warehouses %}
+                                    {% for item in warehouses %}
                                         <option 
-                                            {% if warehouse.name == warehouse_name %} selected {% endif %} 
-                                            value="{% url 'inventory-products' %}?warehouse_id={{warehouse.id}}"
+                                            {% if item.name == warehouse_name %} selected {% endif %} 
+                                            value="{% url 'inventory-products' %}?warehouse_id={{item.id}}"
                                         >
-                                            {{warehouse.name}}
+                                            {{item.name}}
                                         </option>
-                                    {% endfor %}                            
+                                    {% endfor %}
                                 </select>
                             </div>
+                        </div>
+                    {% else %}
+                        <div class="form-group d-flex flex-column">
+                            <label for="wh">Warehouse</label>
+                            <input value="{{warehouse.name}}" class="form-control" disabled />
                         </div>
                     {% endif %}
                     <div class="form-group">
