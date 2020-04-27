@@ -34,7 +34,7 @@
                     <div class="form-group">
                         <label for="search" class="col-sm-3">Search</label>
                         <div class="col-sm-12">
-                            <input  type="text" id="search" class="form-control" placeholder="Cari">
+                            <input  type="text" id="search" class="form-control" placeholder="Search">
                         </div>
                     </div>
                 </div>
@@ -51,7 +51,7 @@
                         <th>Status</th>
                         <th>Due</th>
                         <th>Total</th>
-                        <th>Aksi</th>
+                        <th>Option</th>
                     </tr>
                     {% for invoice in invoices %}
                         <tr>
@@ -64,8 +64,8 @@
                                 {% if invoice.status != 'DRAFT' %}
                                     <a href={% url 'invoice-generate-pdf' invoice.id %} class="btn btn-warning">Print</a>
                                 {% endif %}
-                                <a href={% url 'invoice-form' invoice.id %} class="btn btn-secondary">Update</a>
-                                <button class="btn btn-danger ml-2" onClick="deleteInvoice('{% url 'invoice-delete' invoice.id %}', '{{invoice.invoice_no}}')">Hapus</button>
+                                <a href={% url 'invoice-form' invoice.id %} class="btn btn-secondary ml-2">Update</a>
+                                <button class="btn btn-danger ml-2" onClick="deleteInvoice('{% url 'invoice-delete' invoice.id %}', '{{invoice.invoice_no}}')">Delete</button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -102,7 +102,7 @@
                 } 
             })
 
-            message = "Kamu yakin ingin menghapus invoice ini? " + name
+            message = "You sure want to delete this invoice? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
                 $.ajax({

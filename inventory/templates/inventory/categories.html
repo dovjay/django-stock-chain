@@ -15,7 +15,7 @@
                     </div>
                 </div>
                 <div class="ml-auto">
-                    <a href={% url 'inventory-create-category' %} class="btn btn-primary">Tambah Kategori</a>
+                    <a href={% url 'inventory-create-category' %} class="btn btn-primary">Add Category</a>
                 </div>
             </div>
 
@@ -23,8 +23,8 @@
                 <table class="table table-hover">
                     <tr>
                         <th>Id</th>
-                        <th>Nama</th>
-                        <th>Aksi</th>
+                        <th>Name</th>
+                        <th>Option</th>
                     </tr>
                     {% for category in categories %}
                         <tr>
@@ -33,7 +33,7 @@
                             <td>
                                 {% if category.name != 'All' %}
                                     <a href={% url 'inventory-update-category' category.id %} class="btn btn-secondary">Update</a>
-                                    <button class="btn btn-danger ml-2" onClick="deleteCategory('{% url 'inventory-delete-category' category.id %}', '{{category.name}}')">Hapus</button>
+                                    <button class="btn btn-danger ml-2" onClick="deleteCategory('{% url 'inventory-delete-category' category.id %}', '{{category.name}}')">Delete</button>
                                 {% endif %}
                             </td>
                         </tr>
@@ -71,7 +71,7 @@
                 } 
             })
 
-            message = "Kamu yakin ingin menghapus kategori ini? " + name
+            message = "You sure want to delete this category? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
                 $.ajax({

@@ -36,19 +36,19 @@
                     </div>
                 </div>
                 <div class="ml-auto">
-                    <a class="btn btn-primary" href={% url 'inventory-create-product'%}>Tambah Product</a>
+                    <a class="btn btn-primary" href={% url 'inventory-create-product'%}>Add Product</a>
                 </div>
             </div>
             <div class="table-responsive">
                 <table class="table table-hover">
                     <tr>
                         <th>Id</th>
-                        <th>Gambar</th>
-                        <th>Nama</th>
-                        <th>SKU/Kode</th>
-                        <th>Kategori</th>
-                        <th>Terakhir diperbarui</th>
-                        <th>Aksi</th>
+                        <th>Picture</th>
+                        <th>Name</th>
+                        <th>SKU/Code</th>
+                        <th>Category</th>
+                        <th>Last Updated</th>
+                        <th>Option</th>
                     </tr>
                     {% for product in products %}
                         <tr>
@@ -63,7 +63,7 @@
                             <td>
                                 <a href="{% url 'inventory-varian-product' %}?product_id={{product.id}}" class="btn btn-success">See Varian</a>
                                 <a href={% url 'inventory-update-product' product.id %} class="btn btn-secondary">Update</a>
-                                <button class="btn btn-danger ml-2" onClick="deleteProduct('{% url 'inventory-delete-product' product.id %}', '{{product.name}}')">Hapus</button>
+                                <button class="btn btn-danger ml-2" onClick="deleteProduct('{% url 'inventory-delete-product' product.id %}', '{{product.name}}')">Delete</button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -100,7 +100,7 @@
                 } 
             })
 
-            message = "Kamu yakin ingin menghapus produk ini? " + name
+            message = "You sure want to delete this product? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
                 $.ajax({

@@ -3,6 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.db.models import F
 from django.template.loader import get_template
+from django.contrib.auth.decorators import login_required
 from .models import Invoice, InvoiceItem
 from .forms import InvoiceForm, InvoiceItemForm
 from account.models import Warehouse, Contact, PermissionWarehouse
@@ -11,6 +12,8 @@ from django.forms.models import model_to_dict
 from weasyprint import HTML, CSS
 
 # Create your views here.
+
+@login_required
 def invoices(request):
     if request.user.is_superuser:
         if request.GET.get('warehouse_id'):
@@ -37,11 +40,13 @@ def invoices(request):
     }
     return render(request, 'invoice/invoices.html', context)
 
+@login_required
 def create_invoice(request, warehouse_id):
     warehouse = Warehouse.objects.get(pk=warehouse_id)
     invoice = Invoice.objects.create(warehouse=warehouse)
     return redirect(reverse('invoice-form', kwargs={'invoice_id': invoice.id }))
 
+@login_required
 def invoice_form(request, invoice_id):
     alert = ''
     if request.method == "POST":
@@ -68,10 +73,12 @@ def invoice_form(request, invoice_id):
     }
     return render(request, 'invoice/invoice_form.html', context)
 
+@login_required
 def delete_invoice(request, pk):
     Invoice.objects.get(pk=pk).delete()
     return redirect(reverse('invoice-list'))
 
+@login_required
 def varian_product_list(request, product_id):
     product = Product.objects.get(pk=product_id)
     varian_products = VarianProduct.objects.filter(product=product).values('varian_attribute', 'varian_value', 'stock', 'sell_price', 'id', 'product__name')
@@ -80,6 +87,7 @@ def varian_product_list(request, product_id):
     }
     return JsonResponse(data)
 
+@login_required
 def save_invoice_item(request, invoice_id):
     if request.method == "POST":
         form = InvoiceItemForm(request.POST)
@@ -101,6 +109,7 @@ def save_invoice_item(request, invoice_id):
         else:
             return JsonResponse({'status': 'false', 'message': "Form isn't valid!" }, status=400)
 
+@login_required
 def delete_invoice_item(request, pk):
     if request.method == 'POST':
         item = InvoiceItem.objects.get(pk=pk)
@@ -113,6 +122,7 @@ def delete_invoice_item(request, pk):
         }
         return JsonResponse(data)
 
+@login_required
 def generate_invoice_pdf(request, pk):
     invoice = Invoice.objects.get(pk=pk)
     invoiceitems = InvoiceItem.objects.filter(invoice=invoice)

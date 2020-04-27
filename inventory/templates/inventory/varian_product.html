@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div class="ml-auto">
-                    <button onclick="addVarian()" class="btn btn-primary">Tambah Varian</button>
+                    <button onclick="addVarian()" class="btn btn-primary">Add Varian</button>
                 </div>
             </div>
 
@@ -34,7 +34,7 @@
                     <th>Buy Price</th>
                     <th>Sell Price</th>
                     <th>Stock</th>
-                    <th>Aksi</th>
+                    <th>Option</th>
                 </tr>
                 {% if varian_products %}
                     {% for object in varian_products %}
@@ -46,7 +46,7 @@
                             <td>{{object.stock}}</td>
                             <td>
                                 <a href={% url 'inventory-update-varian-product' object.id %} class="btn btn-secondary">Update</a>
-                                <button class="btn btn-danger ml-2" onClick="deleteVarianProduct('{% url 'inventory-delete-varian-product' object.id %}', '{{object.varian_attribute}}: {{object.varian_value}}')">Hapus</button>
+                                <button class="btn btn-danger ml-2" onClick="deleteVarianProduct('{% url 'inventory-delete-varian-product' object.id %}', '{{object.varian_attribute}}: {{object.varian_value}}')">Delete</button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -124,7 +124,7 @@
                 } 
             })
 
-            message = "Kamu yakin ingin menghapus varian ini? " + name
+            message = "You sure want to delete this varian? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
                 $.ajax({

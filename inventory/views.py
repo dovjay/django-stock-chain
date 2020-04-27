@@ -3,12 +3,15 @@ from django.db.models import Q, Sum
 from django.db.models.functions import Trim
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import ProductForm, ProductSUForm, VarianProductForm, CategoryForm
 from .models import Category, Product, VarianProduct
 from account.models import Warehouse, PermissionWarehouse
 from invoice.models import InvoiceItem, Invoice
 
 # Create your views here.
+@login_required
 def dashboard(request):
     total_orders = Invoice.objects.filter(~Q(status="DRAFT")).count()
     orders_paid = Invoice.objects.filter(status="PAID").count()
@@ -22,6 +25,7 @@ def dashboard(request):
     }
     return render(request, 'inventory/dashboard.html', context)
 
+@login_required
 def products(request):
     if request.user.is_superuser:
 
@@ -52,7 +56,7 @@ def products(request):
     response.set_cookie('warehouse_id', warehouse.id)
     return response
 
-class CreateProduct(CreateView):
+class CreateProduct(LoginRequiredMixin, CreateView):
     model = Product
     template_name_suffix = '_form'
 
@@ -73,16 +77,17 @@ class CreateProduct(CreateView):
         success_url = f'{url}?{qs}'
         return success_url
 
-class UpdateProduct(UpdateView):
+class UpdateProduct(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name_suffix = '_form'
     success_url = reverse_lazy('inventory-products')
 
-class DeleteProduct(DeleteView):
+class DeleteProduct(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('inventory-products')
 
+@login_required
 def varian_product(request):
     if request.GET.get('product_id'):
         product = Product.objects.get(pk=request.GET.get('product_id'))
@@ -103,7 +108,7 @@ def varian_product(request):
     }
     return render(request, 'inventory/varian_product.html', context)
 
-class CreateVarianProduct(CreateView):
+class CreateVarianProduct(LoginRequiredMixin, CreateView):
     model = VarianProduct
     form_class = VarianProductForm
     template_name_suffix = '_form'
@@ -118,7 +123,7 @@ class CreateVarianProduct(CreateView):
         form.instance.product = get_object_or_404(Product, id=self.kwargs.get('project_id'))
         return super(CreateVarianProduct, self).form_valid(form)
 
-class UpdateVarianProduct(UpdateView):
+class UpdateVarianProduct(LoginRequiredMixin, UpdateView):
     model = VarianProduct
     form_class = VarianProductForm
     template_name_suffix = '_form'
@@ -129,10 +134,11 @@ class UpdateVarianProduct(UpdateView):
         success_url = f'{url}?{qs}'
         return success_url
 
-class DeleteVarianProduct(DeleteView):
+class DeleteVarianProduct(LoginRequiredMixin, DeleteView):
     model = VarianProduct
     success_url = reverse_lazy('inventory-varian-product')
 
+@login_required
 def categories(request):
     categories = Category.objects.all()
     context = {
@@ -140,18 +146,18 @@ def categories(request):
     }
     return render(request, 'inventory/categories.html', context)
 
-class CreateCategory(CreateView):
+class CreateCategory(LoginRequiredMixin, CreateView):
     model = Category
     form_class = CategoryForm
     template_name_suffix =  '_form'
     success_url = reverse_lazy('inventory-categories')
 
-class UpdateCategory(UpdateView):
+class UpdateCategory(LoginRequiredMixin, UpdateView):
     model = Category
     form_class = CategoryForm
     template_name_suffix = '_form'
     success_url = reverse_lazy('inventory-categories')
     
-class DeleteCategory(DeleteView):
+class DeleteCategory(LoginRequiredMixin, DeleteView):
     model = Category
     success_url = reverse_lazy('inventory-categories')

@@ -54,7 +54,7 @@
                     <th>Varian Product</th>
                     <th>Price</th>
                     <th>Qty
-                    <th>Aksi</th>
+                    <th>Option</th>
                 </tr>
                 {% for item in invoiceitems %}
                     <tr id="item-{{ item.id }}">
@@ -63,7 +63,7 @@
                         <td><input id="sellPrice-{{ item.id }}" class="form-control" type="text" disabled value={{ item.price }}></td>
                         <td><input id="qty-{{ item.id }}" class="form-control" type="text" disabled value={{ item.quantity }}></td>
                         <td id="action-item-{{ item.id }}">
-                            <button class="btn btn-danger ml-2" onClick="deleteItem('{% url 'invoice-delete-invoice-item' item.id %}', '{{item.varian_product.product.sku}}')">Hapus</button>
+                            <button class="btn btn-danger ml-2" onClick="deleteItem('{% url 'invoice-delete-invoice-item' item.id %}', '{{item.varian_product.product.sku}}')">Delete</button>
                         </td>
                     </tr>
                 {% endfor %}
@@ -98,8 +98,8 @@
         </div>
         <hr>
         <div class="mt-5">
-            <button type="button" class="btn btn-danger" onClick="goBack()">Batal</button>
-            <button type="submit" class="btn btn-success">Simpan</button>
+            <button type="button" class="btn btn-danger" onClick="goBack()">Cancel</button>
+            <button type="submit" class="btn btn-success">Save</button>
         </div>
     </form>
 {% endblock content %}
@@ -263,7 +263,7 @@
 
         function deleteItem(url, name) {
             this.event.preventDefault()
-            message = "Kamu yakin ingin menghapus item ini? " + name
+            message = "You sure want to delete this item? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
                 getCookie()

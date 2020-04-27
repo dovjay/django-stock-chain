@@ -11,7 +11,7 @@
       						<i class="fa fa-chevron-left"></i>
       					</div><!-- .action-panel-toggle -->
       					<div class="m-b-lg">
-      						<a href={% url 'account-create-contact' %} class="btn btn-primary btn-block">Tambah Kontak</a>
+      						<a href={% url 'account-create-contact' %} class="btn btn-primary btn-block">Add Contact</a>
       					</div>
       					<!-- contact category list -->
       					<div id="categories-list" class="app-actions-list scrollable-container">
@@ -127,7 +127,7 @@
                 } 
             })
 
-            message = "Kamu yakin ingin menghapus kontak ini? " + name
+            message = "You sure want to delete this contact? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
                 $.ajax({
