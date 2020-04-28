@@ -16,7 +16,7 @@
       					<!-- contact category list -->
       					<div id="categories-list" class="app-actions-list scrollable-container">
       						<div class="list-group">
-      							<a href="#" class="list-group-item">
+      							<a href="{% url 'account-contacts' %}" class="list-group-item">
       								<i class="fa fa-inbox text-color m-r-xs"></i>
       								<span>All Contacts</span>
       							</a>
@@ -25,13 +25,13 @@
       						<hr class="m-0 m-b-md" style="border-color: #ddd;">
 
       						<div class="list-group">
-      							<a href="#" class="list-group-item">
+      							<a href="{% url 'account-contacts' %}?is_customer=true" class="list-group-item">
       								<div class="item-data">
       									<span class="label-text">Customer</span>
       									<span class="pull-right">{{customer_count}}</span>
       								</div>
       							</a><!-- .list-group-item -->
-      							<a href="#" class="list-group-item">
+      							<a href="{% url 'account-contacts' %}?is_supplier=true" class="list-group-item">
       								<div class="item-data">
       									<span class="label-text">Supplier</span>
       									<span class="pull-right">{{supplier_count}}</span>
@@ -49,9 +49,13 @@
       					<div class="col-md-12">
       						<div class="mail-toolbar m-b-lg">
 
-      							<div class="form-group" role="group">
-									<input class="form-control" type="text" placeholder="Search Contact Name">
-      							</div>
+      							<div class="form-group">
+									<label for="search" class="col-sm-3">Search</label>
+									<div class="col-sm-3 d-flex">
+										<input  type="text" id="search" class="form-control" placeholder="Type Name, Phone, or Email">
+										<button onclick="search()" class="btn btn-secondary"><i class="fa fa-search"></i></button>
+									</div>
+								</div>
 
       							{% comment %} <div class="btn-group pull-right" role="group">
       								<a href="#" class="btn btn-default"><i class="fa fa-chevron-left"></i></a>
@@ -102,6 +106,11 @@
 
 {% block script %}
     <script>
+		function search() {
+			keywords = $("#search").val()
+			window.location = "{% url 'account-contacts' %}" + "?q=" + keywords
+		}
+
         function deleteContact(url, name) {
             $.ajaxSetup({ 
                 beforeSend: function(xhr, settings) {

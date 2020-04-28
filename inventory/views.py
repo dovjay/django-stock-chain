@@ -37,13 +37,24 @@ def products(request):
             warehouses = Warehouse.objects.all()
             warehouse = warehouses[0]
 
-        products = Product.objects.filter(warehouse=warehouse)
+        # search
+        if request.GET.get('q'):
+            query = request.GET.get('q')
+            products = Product.objects.filter(Q(warehouse=warehouse), Q(sku__contains=query) | Q(name__contains=query))
+        else:
+            products = Product.objects.filter(warehouse=warehouse)
 
     else:
         permission = PermissionWarehouse.objects.get(user=request.user)
-        products = Product.objects.filter(warehouse=permission.warehouse)
         warehouse = Warehouse.objects.get(pk=permission.warehouse.pk)
         warehouses = warehouse
+
+        # search too
+        if request.GET.get('q'):
+            query = request.GET.get('q')
+            products = Product.objects.filter(Q(warehouse=permission.warehouse), Q(sku__contains=query) | Q(name__contains=query))
+        else:
+            products = Product.objects.filter(warehouse=permission.warehouse)
         
     context = {
         'products': products,
@@ -140,7 +151,12 @@ class DeleteVarianProduct(LoginRequiredMixin, DeleteView):
 
 @login_required
 def categories(request):
-    categories = Category.objects.all()
+    if request.GET.get('q'):
+        query = request.GET.get('q')
+        categories = Category.objects.filter(name__contains=query)
+    else:
+        categories = Category.objects.all()
+
     context = {
         'categories': categories
     }

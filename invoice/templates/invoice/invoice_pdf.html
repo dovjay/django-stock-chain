@@ -66,7 +66,7 @@
                         <td>{{item.sku}}</td>
                         <td>{{item.varian_product.varian_attribute}}: {{item.varian_product.varian_value}}</td>
                         <td>{{item.quantity}}</td>
-                        <td id="subtotal-{{ item.id }}">{{item.get_subtotal}}</td>
+                        <td id="subtotal-{{ item.id }}">Rp {{item.get_subtotal}}</td>
                     </tr>
                 {% endfor %}
             </table>

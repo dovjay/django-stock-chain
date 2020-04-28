@@ -30,8 +30,9 @@
                     {% endif %}
                     <div class="form-group">
                         <label for="search" class="col-sm-3">Search</label>
-                        <div class="col-sm-12">
-                            <input  type="text" id="search" class="form-control" placeholder="Cari Nama atau SKU Product">
+                        <div class="col-sm-12 d-flex">
+                            <input  type="text" id="search" class="form-control" placeholder="Type the Name or SKU">
+                            <button onclick="search()" class="btn btn-secondary"><i class="fa fa-search"></i></button>
                         </div>
                     </div>
                 </div>
@@ -62,7 +63,7 @@
                             <td>{{product.last_modified}}</td>
                             <td>
                                 <a href="{% url 'inventory-varian-product' %}?product_id={{product.id}}" class="btn btn-success">See Varian</a>
-                                <a href={% url 'inventory-update-product' product.id %} class="btn btn-secondary">Update</a>
+                                <a href={% url 'inventory-update-product' product.id %} class="btn btn-secondary ml-2">Update</a>
                                 <button class="btn btn-danger ml-2" onClick="deleteProduct('{% url 'inventory-delete-product' product.id %}', '{{product.name}}')">Delete</button>
                             </td>
                         </tr>
@@ -75,24 +76,14 @@
 
 {% block script %}
     <script>
+        function search() {
+            keywords = $("#search").val()
+            window.location = "{% url 'inventory-products' %}" + '?q=' + keywords + '&' + 'warehouse_id=' + getCookie('warehouse_id')
+        }
+
         function deleteProduct(url, name) {
             $.ajaxSetup({ 
                 beforeSend: function(xhr, settings) {
-                    function getCookie(name) {
-                        var cookieValue = null;
-                        if (document.cookie && document.cookie != '') {
-                            var cookies = document.cookie.split(';');
-                            for (var i = 0; i < cookies.length; i++) {
-                                var cookie = jQuery.trim(cookies[i]);
-                                // Does this cookie string begin with the name we want?
-                                if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                    break;
-                                }
-                            }
-                        }
-                        return cookieValue;
-                    }
                     if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
                         // Only send the token to relative URLs i.e. locally.
                         xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
@@ -111,6 +102,22 @@
                     }
                 })
             }
+        }
+
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
         }
     </script>
 {% endblock script %}

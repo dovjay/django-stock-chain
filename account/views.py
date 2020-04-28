@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import PermissionWarehouse, Warehouse, Contact
@@ -12,7 +13,17 @@ from .forms import ContactForm, PermissionWarehouseForm, WarehouseForm, AccountF
 # Create your views here.
 @login_required
 def contacts(request):
-    contacts = Contact.objects.all()
+    # search contact by name, phone, email, is_customer, and is_supplier
+    if request.GET.get('q'):
+        query = request.GET.get('q')
+        contacts = Contact.objects.filter(Q(name__contains=query) | Q(phone__contains=query) | Q(email__contains=query))
+    elif request.GET.get('is_customer'):
+        contacts = Contact.objects.filter(is_customer=True)
+    elif request.GET.get('is_supplier'):
+        contacts = Contact.objects.filter(is_supplier=True)
+    else:
+        contacts = Contact.objects.all()
+
     customer_count = Contact.objects.filter(is_customer=True).count()
     supplier_count = Contact.objects.filter(is_supplier=True).count()
     context = {

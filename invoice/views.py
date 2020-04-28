@@ -1,7 +1,7 @@
 from django.urls import reverse
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
-from django.db.models import F
+from django.db.models import F, Q
 from django.template.loader import get_template
 from django.contrib.auth.decorators import login_required
 from .models import Invoice, InvoiceItem
@@ -19,7 +19,15 @@ def invoices(request):
         if request.GET.get('warehouse_id'):
             warehouse = Warehouse.objects.get(pk=request.GET.get('warehouse_id'))
             warehouses = Warehouse.objects.all()
-            invoices = Invoice.objects.filter(warehouse=warehouse).order_by('-invoice_no')
+            invoices = Invoice.objects.filter(warehouse=warehouse)
+
+            # search
+            if request.GET.get('q'):
+                query = request.GET.get('q')
+                invoices = Invoice.objects.filter(Q(warehouse=warehouse), Q(customer__contains=query) | Q(invoice_no__contains=query)).order_by('-invoice_no')
+            else:
+                invoices = Invoice.objects.filter(warehouse=warehouse).order_by('-invoice_no')
+
         else:
             warehouses = Warehouse.objects.all()
             warehouse = warehouses[0]
@@ -31,7 +39,13 @@ def invoices(request):
         permission = PermissionWarehouse.objects.get(user=request.user)
         warehouse = Warehouse.objects.get(pk=permission.warehouse.pk)
         warehouses = warehouse
-        invoices = Invoice.objects.filter(warehouse=permission.warehouse).order_by('-invoice_no')
+
+        # search
+        if request.GET.get('q'):
+            query = request.GET.get('q')
+            invoices = Invoice.objects.filter(Q(warehouse=permission.warehouse), Q(customer__contains=query) | Q(invoice_no__contains=query)).order_by('-invoice_no')
+        else:
+            invoices = Invoice.objects.filter(warehouse=permission.warehouse).order_by('-invoice_no')
 
     context = {
         'invoices': invoices,
