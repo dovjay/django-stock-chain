@@ -2,4 +2,3 @@ __pycache__
 envConfig.json
 media
 db.sqlite3
-migrations
