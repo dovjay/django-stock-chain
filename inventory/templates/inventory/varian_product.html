@@ -5,11 +5,15 @@
         <div class="widget p-lg">
             <h4 class="m-b-lg">Varian Product List</h4>
             <div class="d-flex">
-                <div class="mb-4 d-flex">
+                <div class="form-group d-flex flex-column">
+                    <label for="wh">Warehouse</label>
+                    <input value="{{warehouse.name}}" class="form-control" disabled />
+                </div>
+                <div class="mb-4 ml-3 d-flex">
                     <div class="form-group">
                         <label for="control-dem1o-6">Select a Product</label>
                         <div id="control-demo-6">
-                            <input type="text" class="form-control" id="product" list="productname" value="{{product_sku}}">
+                            <input type="text" class="form-control" list="productname" value="{{product_sku}}">
                             <datalist id="productname">
                                 {% for product in products %}
                                     <option data-value="{% url 'inventory-varian-product' %}?product_id={{product.id}}">{{product.sku}}</option>
@@ -19,7 +23,7 @@
                     </div>
                 </div>
                 <div class="ml-auto">
-                    <button onclick="addVarian()" class="btn btn-primary">Tambah Varian</button>
+                    <button onclick="addVarian()" class="btn btn-primary">Add Varian</button>
                 </div>
             </div>
 
@@ -29,7 +33,8 @@
                     <th>Value</th>
                     <th>Buy Price</th>
                     <th>Sell Price</th>
-                    <th>Aksi</th>
+                    <th>Stock</th>
+                    <th>Option</th>
                 </tr>
                 {% if varian_products %}
                     {% for object in varian_products %}
@@ -38,9 +43,10 @@
                             <td>{{object.varian_value}}</td>
                             <td>{{object.buy_price}}</td>
                             <td>{{object.sell_price}}</td>
+                            <td>{{object.stock}}</td>
                             <td>
                                 <a href={% url 'inventory-update-varian-product' object.id %} class="btn btn-secondary">Update</a>
-                                <button class="btn btn-danger ml-2" onClick="deleteVarianProduct('{% url 'inventory-delete-varian-product' object.id %}', '{{object.varian_attribute}}: {{object.varian_value}}')">Hapus</button>
+                                <button class="btn btn-danger ml-2" onClick="deleteVarianProduct('{% url 'inventory-delete-varian-product' object.id %}', '{{object.varian_attribute}}: {{object.varian_value}}')">Delete</button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -118,7 +124,7 @@
                 } 
             })
 
-            message = "Kamu yakin ingin menghapus varian ini? " + name
+            message = "You sure want to delete this varian? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
                 $.ajax({

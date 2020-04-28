@@ -4,19 +4,37 @@ from django.contrib.auth.models import User
 from django.urls import reverse_lazy
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
+from django.db.models import Q
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import PermissionWarehouse, Warehouse, Contact
 from .forms import ContactForm, PermissionWarehouseForm, WarehouseForm, AccountForm
 
 # Create your views here.
+@login_required
 def contacts(request):
-    contacts = Contact.objects.all()
+    # search contact by name, phone, email, is_customer, and is_supplier
+    if request.GET.get('q'):
+        query = request.GET.get('q')
+        contacts = Contact.objects.filter(Q(name__contains=query) | Q(phone__contains=query) | Q(email__contains=query))
+    elif request.GET.get('is_customer'):
+        contacts = Contact.objects.filter(is_customer=True)
+    elif request.GET.get('is_supplier'):
+        contacts = Contact.objects.filter(is_supplier=True)
+    else:
+        contacts = Contact.objects.all()
+
+    customer_count = Contact.objects.filter(is_customer=True).count()
+    supplier_count = Contact.objects.filter(is_supplier=True).count()
     context = {
-        'contacts': contacts
+        'contacts': contacts,
+        'customer_count': customer_count,
+        'supplier_count': supplier_count
     }
     return render(request, 'account/contacts.html', context)
 
 # Contact Controller
-class CreateContact(CreateView):
+class CreateContact(LoginRequiredMixin, CreateView):
     model = Contact
     form_class = ContactForm
     template_name_suffix = '_form'
@@ -30,16 +48,17 @@ class CreateContact(CreateView):
             form.instance.owner = permission.warehouse.owner
         return super(CreateContact, self).form_valid(form)
 
-class UpdateContact(UpdateView):
+class UpdateContact(LoginRequiredMixin, UpdateView):
     model = Contact
     form_class = ContactForm
     template_name_suffix = '_form'
     success_url = reverse_lazy('account-contacts')
 
-class DeleteContact(DeleteView):
+class DeleteContact(LoginRequiredMixin, DeleteView):
     model = Contact
     success_url = reverse_lazy('account-contacts')
 
+@login_required
 def manage_accounts(request):
     warehouses = Warehouse.objects.all()
     permissions = PermissionWarehouse.objects.all()
@@ -52,7 +71,7 @@ def manage_accounts(request):
     return render(request, 'account/accounts.html', context)
 
 # Warehouse Controller
-class CreateWarehouse(UserPassesTestMixin, CreateView):
+class CreateWarehouse(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Warehouse
     form_class = WarehouseForm
     template_name_suffix = '_form'
@@ -65,7 +84,7 @@ class CreateWarehouse(UserPassesTestMixin, CreateView):
         form.instance.owner = self.request.user
         return super(CreateWarehouse, self).form_valid(form)
 
-class UpdateWarehouse(UserPassesTestMixin, UpdateView):
+class UpdateWarehouse(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Warehouse
     form_class = WarehouseForm
     template_name_suffix = '_form'
@@ -74,7 +93,7 @@ class UpdateWarehouse(UserPassesTestMixin, UpdateView):
     def test_func(self):
         return self.request.user.is_superuser
 
-class DeleteWarehouse(UserPassesTestMixin, DeleteView):
+class DeleteWarehouse(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Warehouse
     success_url = reverse_lazy('account-manage-accounts')
 
@@ -82,7 +101,7 @@ class DeleteWarehouse(UserPassesTestMixin, DeleteView):
         return self.request.user.is_superuser
 
 # Permission Controller
-class CreatePermissionWarehouse(UserPassesTestMixin, CreateView):
+class CreatePermissionWarehouse(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = PermissionWarehouse
     form_class = PermissionWarehouseForm
     template_name_suffix = '_form'
@@ -91,7 +110,7 @@ class CreatePermissionWarehouse(UserPassesTestMixin, CreateView):
     def test_func(self):
         return self.request.user.is_superuser
 
-class DeletePermissionWarehouse(UserPassesTestMixin, DeleteView):
+class DeletePermissionWarehouse(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = PermissionWarehouse
     success_url = reverse_lazy('account-manage-accounts')
 
@@ -99,7 +118,7 @@ class DeletePermissionWarehouse(UserPassesTestMixin, DeleteView):
         return self.request.user.is_superuser
 
 # Account Controller
-class CreateAccount(UserPassesTestMixin, CreateView):
+class CreateAccount(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = User
     form_class = AccountForm
     template_name = 'account/account_form.html'
@@ -108,7 +127,7 @@ class CreateAccount(UserPassesTestMixin, CreateView):
     def test_func(self):
         return self.request.user.is_superuser
 
-class UpdateAccount(UserPassesTestMixin, UpdateView):
+class UpdateAccount(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = User
     form_class = AccountForm
     template_name = 'account/account_form.html'
@@ -117,7 +136,7 @@ class UpdateAccount(UserPassesTestMixin, UpdateView):
     def test_func(self):
         return self.request.user.is_superuser
 
-class DeleteAccount(UserPassesTestMixin, DeleteView):
+class DeleteAccount(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = User
     success_url = reverse_lazy('account-manage-accounts')
 

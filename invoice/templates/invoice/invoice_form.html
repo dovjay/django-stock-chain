@@ -54,7 +54,7 @@
                     <th>Varian Product</th>
                     <th>Price</th>
                     <th>Qty
-                    <th>Aksi</th>
+                    <th>Option</th>
                 </tr>
                 {% for item in invoiceitems %}
                     <tr id="item-{{ item.id }}">
@@ -63,7 +63,7 @@
                         <td><input id="sellPrice-{{ item.id }}" class="form-control" type="text" disabled value={{ item.price }}></td>
                         <td><input id="qty-{{ item.id }}" class="form-control" type="text" disabled value={{ item.quantity }}></td>
                         <td id="action-item-{{ item.id }}">
-                            <button class="btn btn-danger ml-2" onClick="deleteItem('{% url 'invoice-delete-invoice-item' item.id %}', '{{item.varian_product.product.sku}}')">Hapus</button>
+                            <button class="btn btn-danger ml-2" onClick="deleteItem('{% url 'invoice-delete-invoice-item' item.id %}', '{{item.varian_product.product.sku}}')">Delete</button>
                         </td>
                     </tr>
                 {% endfor %}
@@ -98,8 +98,8 @@
         </div>
         <hr>
         <div class="mt-5">
-            <button type="button" class="btn btn-danger" onClick="goBack()">Batal</button>
-            <button type="submit" class="btn btn-success">Simpan</button>
+            <button type="button" class="btn btn-danger" onClick="goBack()">Cancel</button>
+            <button type="submit" class="btn btn-success">Save</button>
         </div>
     </form>
 {% endblock content %}
@@ -108,7 +108,10 @@
     <script>
         // start function when load this page
         countTotal()
-        $("input[name='due']").attr('min', formatDate(Date.now()))
+        const dueDate = "{{ invoice.due }}"
+        if (!dueDate) {
+            $("input[name='due']").attr('min', formatDate(Date.now()))
+        }
 
         function formatDate(date) {
             var d = new Date(date),
@@ -198,7 +201,7 @@
             const price = $(`#sellPrice-${itemId}`).val()
             const quantity = $(`#qty-${itemId}`)
 
-            if (quantity.prop('max') < quantity.val()) {
+            if (Number(quantity.prop('max')) < Number(quantity.val())) {
                 alert("Quantity exceeding maximum stock in inventory!")
                 return false
             }
@@ -259,15 +262,16 @@
         }
 
         function deleteItem(url, name) {
-            message = "Kamu yakin ingin menghapus item ini? " + name
+            this.event.preventDefault()
+            message = "You sure want to delete this item? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
                 getCookie()
                 $.ajax({
                     url: url,
                     method: "POST",
-                    success: function() {
-                        alert(JSON.stringify(data))
+                    success: function(data) {
+                        alert(data.message)
                         location.reload()
                     }
                 })

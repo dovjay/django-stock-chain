@@ -1,14 +1,31 @@
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.db.models import Q, Sum
+from django.db.models.functions import Trim
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import ProductForm, ProductSUForm, VarianProductForm, CategoryForm
 from .models import Category, Product, VarianProduct
 from account.models import Warehouse, PermissionWarehouse
+from invoice.models import InvoiceItem, Invoice
 
 # Create your views here.
+@login_required
 def dashboard(request):
-    return render(request, 'inventory/dashboard.html')
+    total_orders = Invoice.objects.filter(~Q(status="DRAFT")).count()
+    orders_paid = Invoice.objects.filter(status="PAID").count()
+    orders_indebt = Invoice.objects.filter(status="DEBT").count()
+    products = InvoiceItem.objects.values('varian_product__product__name', 'varian_product__product__sku').order_by('varian_product__product__sku').annotate(total_order=Sum('quantity'))[:10]
+    context = {
+        'total_orders': total_orders,
+        'orders_paid': orders_paid,
+        'orders_indebt': orders_indebt,
+        'products': products
+    }
+    return render(request, 'inventory/dashboard.html', context)
 
+@login_required
 def products(request):
     if request.user.is_superuser:
 
@@ -20,21 +37,37 @@ def products(request):
             warehouses = Warehouse.objects.all()
             warehouse = warehouses[0]
 
-        products = Product.objects.filter(warehouse=warehouse)
+        # search
+        if request.GET.get('q'):
+            query = request.GET.get('q')
+            products = Product.objects.filter(Q(warehouse=warehouse), Q(sku__contains=query) | Q(name__contains=query))
+        else:
+            products = Product.objects.filter(warehouse=warehouse)
 
     else:
         permission = PermissionWarehouse.objects.get(user=request.user)
-        warehouse = Warehouse.objects.get(warehouse=permission.warehouse)
-        products = Product.objects.filter(warehouse=permission.warehouse)
+        warehouse = Warehouse.objects.get(pk=permission.warehouse.pk)
+        warehouses = warehouse
+
+        # search too
+        if request.GET.get('q'):
+            query = request.GET.get('q')
+            products = Product.objects.filter(Q(warehouse=permission.warehouse), Q(sku__contains=query) | Q(name__contains=query))
+        else:
+            products = Product.objects.filter(warehouse=permission.warehouse)
         
     context = {
         'products': products,
         'warehouses': warehouses,
+        'warehouse': warehouse,
         'warehouse_name': warehouse.name
     }
-    return render(request, 'inventory/products.html', context)
 
-class CreateProduct(CreateView):
+    response = render(request, 'inventory/products.html', context)
+    response.set_cookie('warehouse_id', warehouse.id)
+    return response
+
+class CreateProduct(LoginRequiredMixin, CreateView):
     model = Product
     template_name_suffix = '_form'
 
@@ -55,16 +88,17 @@ class CreateProduct(CreateView):
         success_url = f'{url}?{qs}'
         return success_url
 
-class UpdateProduct(UpdateView):
+class UpdateProduct(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name_suffix = '_form'
     success_url = reverse_lazy('inventory-products')
 
-class DeleteProduct(DeleteView):
+class DeleteProduct(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy('inventory-products')
 
+@login_required
 def varian_product(request):
     if request.GET.get('product_id'):
         product = Product.objects.get(pk=request.GET.get('product_id'))
@@ -74,15 +108,18 @@ def varian_product(request):
         product_sku = ''
         varian_products = None
 
-    products = Product.objects.all()
+    warehouse = Warehouse.objects.get(pk=request.COOKIES.get('warehouse_id'))
+    products = Product.objects.filter(warehouse=warehouse)
+
     context = {
         'products': products,
         'varian_products': varian_products,
-        'product_sku': product_sku
+        'product_sku': product_sku,
+        'warehouse': warehouse
     }
     return render(request, 'inventory/varian_product.html', context)
 
-class CreateVarianProduct(CreateView):
+class CreateVarianProduct(LoginRequiredMixin, CreateView):
     model = VarianProduct
     form_class = VarianProductForm
     template_name_suffix = '_form'
@@ -97,7 +134,7 @@ class CreateVarianProduct(CreateView):
         form.instance.product = get_object_or_404(Product, id=self.kwargs.get('project_id'))
         return super(CreateVarianProduct, self).form_valid(form)
 
-class UpdateVarianProduct(UpdateView):
+class UpdateVarianProduct(LoginRequiredMixin, UpdateView):
     model = VarianProduct
     form_class = VarianProductForm
     template_name_suffix = '_form'
@@ -108,29 +145,35 @@ class UpdateVarianProduct(UpdateView):
         success_url = f'{url}?{qs}'
         return success_url
 
-class DeleteVarianProduct(DeleteView):
+class DeleteVarianProduct(LoginRequiredMixin, DeleteView):
     model = VarianProduct
     success_url = reverse_lazy('inventory-varian-product')
 
+@login_required
 def categories(request):
-    categories = Category.objects.all()
+    if request.GET.get('q'):
+        query = request.GET.get('q')
+        categories = Category.objects.filter(name__contains=query)
+    else:
+        categories = Category.objects.all()
+
     context = {
         'categories': categories
     }
     return render(request, 'inventory/categories.html', context)
 
-class CreateCategory(CreateView):
+class CreateCategory(LoginRequiredMixin, CreateView):
     model = Category
     form_class = CategoryForm
     template_name_suffix =  '_form'
     success_url = reverse_lazy('inventory-categories')
 
-class UpdateCategory(UpdateView):
+class UpdateCategory(LoginRequiredMixin, UpdateView):
     model = Category
     form_class = CategoryForm
     template_name_suffix = '_form'
     success_url = reverse_lazy('inventory-categories')
     
-class DeleteCategory(DeleteView):
+class DeleteCategory(LoginRequiredMixin, DeleteView):
     model = Category
     success_url = reverse_lazy('inventory-categories')

@@ -1,7 +1,44 @@
 {% extends "inventory/base.html" %}
 
 {% block content %}
-    <div class="row">
-        Nice catch!
+    <div class="col-md-12">
+        <div class="widget p-lg">
+            <h4 class="m-b-lg">Dashboard</h4>
+            
+            <div class="d-flex">
+                <div class="col-md-3 rounded text-center" style="border: 1px solid grey; padding: 10px;">
+                    <h3>Total Orders</h3>
+                    <h4>{{total_orders}}</h4>
+                </div>
+                <div class="col-md-3 mx-auto rounded text-center" style="border: 1px solid grey; padding: 10px;">
+                    <h3>Orders Paid</h3>
+                    <h4>{{orders_paid}}</h4>
+                </div>
+                <div class="col-md-3 rounded text-center" style="border: 1px solid grey; padding: 10px;">
+                    <h3>Orders in Debt</h3>
+                    <h4>{{orders_indebt}}</h4>
+                </div>
+            </div>
+        </div>
+        <div class="widget p-lg">
+            <h4 class="m-b-lg">Top Selling Product</h4>
+            
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <tr>
+                        <th>SKU</th>
+                        <th>Name</th>
+                        <th>Orders</th>
+                    </tr>
+                    {% for item in products %}
+                        <tr>
+                            <td>{{item.varian_product__product__sku}}</td>
+                            <td>{{item.varian_product__product__name}}</td>
+                            <td>{{item.total_order}}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
     </div>
 {% endblock content %}
