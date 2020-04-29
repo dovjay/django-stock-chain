@@ -30,7 +30,10 @@ def invoices(request):
 
         else:
             warehouses = Warehouse.objects.all()
-            warehouse = warehouses[0]
+            if warehouses:
+                warehouse = warehouses[0]
+            else:
+                return redirect(reverse('account-create-warehouse'))
             url = reverse('invoice-list')
             qs = f'warehouse_id={warehouse.id}'
             return redirect(f'{url}?{qs}')

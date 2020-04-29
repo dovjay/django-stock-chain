@@ -1,7 +1,7 @@
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.db.models import Q, Sum
 from django.db.models.functions import Trim
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -35,7 +35,10 @@ def products(request):
 
         else:
             warehouses = Warehouse.objects.all()
-            warehouse = warehouses[0]
+            if warehouses:
+                warehouse = warehouses[0]
+            else:
+                return redirect(reverse_lazy('account-create-warehouse'))
 
         # search
         if request.GET.get('q'):
@@ -108,7 +111,11 @@ def varian_product(request):
         product_sku = ''
         varian_products = None
 
-    warehouse = Warehouse.objects.get(pk=request.COOKIES.get('warehouse_id'))
+    try:
+        warehouse = Warehouse.objects.get(pk=request.COOKIES.get('warehouse_id'))
+    except:
+        return redirect(reverse_lazy('account-create-warehouse'))
+
     products = Product.objects.filter(warehouse=warehouse)
 
     context = {

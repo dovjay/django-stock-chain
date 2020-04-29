@@ -2,6 +2,7 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<h2>Contact Form</h2>
     <form method="POST">{% csrf_token %}
         {{ form|crispy }}
         <button type="button" class="btn btn-danger" onClick="goBack()">Cancel</button>
