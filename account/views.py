@@ -54,9 +54,20 @@ class UpdateContact(LoginRequiredMixin, UpdateView):
     template_name_suffix = '_form'
     success_url = reverse_lazy('account-contacts')
 
-class DeleteContact(LoginRequiredMixin, DeleteView):
+    def form_valid(self, form, *args, **kwargs):
+        if self.request.user.is_superuser:
+            form.instance.owner = self.request.user
+        else:
+            permission = get_object_or_404(PermissionWarehouse, user=self.request.user)
+            form.instance.owner = permission.warehouse.owner
+        return super(UpdateContact, self).form_valid(form)
+
+class DeleteContact(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Contact
     success_url = reverse_lazy('account-contacts')
+
+    def test_func(self):
+        return self.request.user.is_superuser
 
 @login_required
 def manage_accounts(request):
