@@ -5,18 +5,18 @@
     <div class="col-md-12">
         <div class="widget p-lg">
             <h4 class="m-b-lg">Categories</h4>
-            <div class="d-flex">
-                <div class="mb-4 d-flex">
-                    <div class="form-group">
-                        <label for="search" class="col-sm-3">Search</label>
-                        <div class="col-sm-12 d-flex">
+            <div class="col-md-12">
+                <div class="mb-4 row d-flex">
+                    <div class="form-group col-sm-12 col-md-3">
+                        <label for="search">Search</label>
+                        <div class="d-flex">
                             <input  type="text" id="search" class="form-control" placeholder="Type the Name">
                             <button onclick="search()" class="btn btn-secondary"><i class="fa fa-search"></i></button>
                         </div>
                     </div>
-                </div>
-                <div class="ml-auto">
-                    <a href={% url 'inventory-create-category' %} class="btn btn-primary">Add Category</a>
+                    <div class="ml-auto my-3 mr-3">
+                        <a href={% url 'inventory-create-category' %} class="btn btn-primary">Add Category</a>
+                    </div>
                 </div>
             </div>
 

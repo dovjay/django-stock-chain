@@ -138,7 +138,10 @@ class CreateVarianProduct(LoginRequiredMixin, CreateView):
         return success_url
 
     def form_valid(self, form, *args, **kwargs):
-        form.instance.product = get_object_or_404(Product, id=self.kwargs.get('project_id'))
+        try:
+            form.instance.product = Product.objects.get(id=self.kwargs.get('project_id'))
+        except:
+            return False
         return super(CreateVarianProduct, self).form_valid(form)
 
 class UpdateVarianProduct(LoginRequiredMixin, UpdateView):

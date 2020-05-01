@@ -1,0 +1,9 @@
+[
+    {
+        "model": "inventory.Category",
+        "pk": 1,
+        "fields": {
+            "name": "All"
+        }
+    }
+]

@@ -13,7 +13,7 @@ class Product(models.Model):
     sku = models.CharField(max_length=200, unique=True)
     category = models.ForeignKey(Category, on_delete=models.SET_DEFAULT, default=1)
     note = models.TextField(blank=True)
-    image = models.ImageField(upload_to='product_images/')
+    image = models.ImageField(default='default_product.jpg', blank=True, upload_to='product_images/')
     supplier = models.ForeignKey(Contact, on_delete=models.SET_NULL, null=True, blank=True)
     last_modified = models.DateField(auto_now=True)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
