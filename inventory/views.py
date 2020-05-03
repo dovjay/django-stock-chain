@@ -121,9 +121,15 @@ def varian_product(request):
         product_sku = ''
         varian_products = None
 
-    try:
+    if request.COOKIES.get('warehouse_id'):
         warehouse = Warehouse.objects.get(pk=request.COOKIES.get('warehouse_id'))
-    except:
+    elif not request.COOKIES.get('warehouse_id') and request.user.is_superuser:
+        warehouses = Warehouse.objects.all()
+        warehouse = warehouses[0]
+    elif not request.COOKIES.get('warehouse_id') and not request.user.is_superuser:
+        permission = PermissionWarehouse.objects.get(user=request.user)
+        warehouse = Warehouse.objects.get(pk=permission.warehouse.id)
+    else:
         return redirect(reverse_lazy('account-create-warehouse'))
 
     products = Product.objects.filter(warehouse=warehouse)
@@ -134,7 +140,10 @@ def varian_product(request):
         'product_sku': product_sku,
         'warehouse': warehouse
     }
-    return render(request, 'inventory/varian_product.html', context)
+
+    response = render(request, 'inventory/varian_product.html', context)
+    response.set_cookie('warehouse_id', warehouse.id)
+    return response
 
 class CreateVarianProduct(LoginRequiredMixin, CreateView):
     model = VarianProduct
