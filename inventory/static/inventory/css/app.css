@@ -94,13 +94,13 @@ a {
     background-color: #ae55ff; }
 
 .btn-success {
-  background-color: #c5f1e2;
-  color: #4fd6a7;
-  border: 1px solid #4fd6a7; }
+  background-color: #328b6c;
+  color: #c5f1e2;
+  border: 1px solid #328b6c; }
   .btn-success:hover, .btn-success:active, .btn-success:focus {
-    background-color: #c5f1e2;
-    color: #4fd6a7;
-    border: 1px solid #4fd6a7;
+    background-color: #328b6c;
+    color: #c5f1e2;
+    border: 1px solid #328b6c;
     opacity: 0.8; }
 
 .btn-info, .dropdown-toggle {

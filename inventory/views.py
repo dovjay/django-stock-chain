@@ -13,14 +13,24 @@ from invoice.models import InvoiceItem, Invoice
 # Create your views here.
 @login_required
 def dashboard(request):
-    total_orders = Invoice.objects.filter(~Q(status="DRAFT")).count()
-    orders_paid = Invoice.objects.filter(status="PAID").count()
-    orders_indebt = Invoice.objects.filter(status="DEBT").count()
+    total_product = Product.objects.all().count()
+
+    assets = VarianProduct.objects.all()
+    total_assets = 0
+    for asset in assets:
+        total_assets += asset.buy_price
+
+    sold_products = InvoiceItem.objects.all()
+    total_profit = 0
+    for product in sold_products:
+        total_profit += product.get_profit
+    
     products = InvoiceItem.objects.values('varian_product__product__name', 'varian_product__product__sku').order_by('varian_product__product__sku').annotate(total_order=Sum('quantity'))[:10]
+
     context = {
-        'total_orders': total_orders,
-        'orders_paid': orders_paid,
-        'orders_indebt': orders_indebt,
+        'total_product': total_product,
+        'total_assets': total_assets,
+        'total_profit': total_profit,
         'products': products
     }
     return render(request, 'inventory/dashboard.html', context)
@@ -138,7 +148,10 @@ class CreateVarianProduct(LoginRequiredMixin, CreateView):
         return success_url
 
     def form_valid(self, form, *args, **kwargs):
-        form.instance.product = get_object_or_404(Product, id=self.kwargs.get('project_id'))
+        try:
+            form.instance.product = Product.objects.get(id=self.kwargs.get('project_id'))
+        except:
+            return False
         return super(CreateVarianProduct, self).form_valid(form)
 
 class UpdateVarianProduct(LoginRequiredMixin, UpdateView):

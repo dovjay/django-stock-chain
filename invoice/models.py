@@ -61,3 +61,7 @@ class InvoiceItem(models.Model):
 
     def get_subtotal(self):
         return self.price * self.quantity
+
+    def get_profit(self):
+        profit = self.varian_product.sell_price - self.varian_product.buy_price
+        return profit * quantity
