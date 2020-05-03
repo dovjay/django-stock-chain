@@ -71,15 +71,19 @@ class DeleteContact(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 @login_required
 def manage_accounts(request):
-    warehouses = Warehouse.objects.all()
-    permissions = PermissionWarehouse.objects.all()
-    accounts = User.objects.all()
-    context = {
-        'warehouses': warehouses,
-        'permissions': permissions,
-        'accounts': accounts
-    }
-    return render(request, 'account/accounts.html', context)
+    if request.user.is_superuser:
+        warehouses = Warehouse.objects.all()
+        permissions = PermissionWarehouse.objects.all()
+        accounts = User.objects.all()
+        context = {
+            'warehouses': warehouses,
+            'permissions': permissions,
+            'accounts': accounts
+        }
+        return render(request, 'account/accounts.html', context)
+    else:
+        return HttpResponse("403 Forbidden")
+
 
 # Warehouse Controller
 class CreateWarehouse(LoginRequiredMixin, UserPassesTestMixin, CreateView):
