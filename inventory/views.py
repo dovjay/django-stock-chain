@@ -25,7 +25,7 @@ def dashboard(request):
     sold_products = InvoiceItem.objects.all()
     total_profit = 0
     for product in sold_products:
-        total_profit += product.get_profit
+        total_profit += product.get_profit()
     
     products = InvoiceItem.objects.values('varian_product__product__name', 'varian_product__product__sku').order_by('varian_product__product__sku').annotate(total_order=Sum('quantity'))[:10]
 
