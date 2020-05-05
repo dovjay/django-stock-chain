@@ -10,6 +10,5 @@ urlpatterns = [
     path('save-invoice-item/<int:invoice_id>/', views.save_invoice_item, name='invoice-save-invoice-item'),
     path('delete-invoice-item/<int:pk>/', views.delete_invoice_item, name='invoice-delete-invoice-item'),
     path('generate-pdf/<int:pk>/', views.generate_invoice_pdf, name='invoice-generate-pdf'),
-    # delete this after template view suffice
-    path('invoice-example/<int:pk>/', views.invoice_example, name="invoice-example")
+    path('export-csv/', views.export_invoices_to_csv, name="invoice-export-to-csv")
 ]

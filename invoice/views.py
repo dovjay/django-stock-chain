@@ -10,6 +10,7 @@ from account.models import Warehouse, Contact, PermissionWarehouse
 from inventory.models import VarianProduct, Product
 from django.forms.models import model_to_dict
 from weasyprint import HTML, CSS
+import csv
 
 # Create your views here.
 
@@ -182,3 +183,22 @@ def invoice_example(request, pk):
     }
     
     return render(request, 'invoice/invoice_pdf.html', context)
+
+@login_required
+def export_invoices_to_csv(request):
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = "attachment;filename=invoice_list.csv"
+
+    field_names = ["No", "Customer", "Status", "Due", "Paid Date", "Subtotal", "Discount", "Total" "Created", "Updated"]
+
+    writer = csv.writer(response)
+    writer.writerow(field_names)
+
+    warehouse = Warehouse.objects.get(pk=request.COOKIES.get('warehouse_id'))
+    invoices = Invoice.objects.filter(Q(warehouse=warehouse), ~Q(status="DRAFT"))
+
+    for invoice in invoices:
+        row = [invoice.invoice_no, invoice.customer, invoice.status, invoice.due, invoice.paid_date, invoice.total, f'{invoice.discount}%', invoice.get_total(), invoice.created, invoice.updated]
+        writer.writerow(row)
+
+    return response

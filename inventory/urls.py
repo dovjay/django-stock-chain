@@ -14,5 +14,6 @@ urlpatterns = [
     path('categories/', views.categories, name='inventory-categories'),
     path('create-category/', views.CreateCategory.as_view(), name='inventory-create-category'),
     path('update-category/<int:pk>/', views.UpdateCategory.as_view(), name='inventory-update-category'),
-    path('delete-category/<int:pk>/', views.DeleteCategory.as_view(), name='inventory-delete-category')
+    path('delete-category/<int:pk>/', views.DeleteCategory.as_view(), name='inventory-delete-category'),
+    path('export-csv/', views.export_products_to_csv, name="inventory-export-to-csv")
 ]

@@ -36,6 +36,7 @@
                     </div>
                 </div>
                 <div class="ml-auto my-3 mr-3">
+                    <a href={% url 'invoice-export-to-csv' %} class="btn btn-warning mr-1">Export</a>
                     <a href={% url 'invoice-create' warehouse.id %} class="btn btn-primary">Add Invoice</a>
                 </div>
             </div>
@@ -59,10 +60,10 @@
                             <td>{{invoice.get_total}}</td>
                             <td>
                                 {% if invoice.status != 'DRAFT' %}
-                                    <a href={% url 'invoice-generate-pdf' invoice.id %} class="btn btn-warning">Print</a>
+                                    <a href={% url 'invoice-generate-pdf' invoice.id %} class="btn btn-warning mr-1">Print</a>
                                 {% endif %}
-                                <a href={% url 'invoice-form' invoice.id %} class="btn btn-secondary ml-2">Update</a>
-                                <button class="btn btn-danger ml-2" onClick="deleteInvoice('{% url 'invoice-delete' invoice.id %}', '{{invoice.invoice_no}}')">Delete</button>
+                                <a href={% url 'invoice-form' invoice.id %} class="btn btn-secondary mr-1">Update</a>
+                                <button class="btn btn-danger" onClick="deleteInvoice('{% url 'invoice-delete' invoice.id %}', '{{invoice.invoice_no}}')">Delete</button>
                             </td>
                         </tr>
                     {% endfor %}
