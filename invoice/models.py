@@ -65,4 +65,4 @@ class InvoiceItem(models.Model):
 
     def get_profit(self):
         profit = self.varian_product.sell_price - self.varian_product.buy_price
-        return profit * quantity
+        return profit * self.quantity
