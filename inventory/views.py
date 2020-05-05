@@ -3,12 +3,14 @@ from django.db.models import Q, Sum
 from django.db.models.functions import Trim
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import ProductForm, ProductSUForm, VarianProductForm, CategoryForm
 from .models import Category, Product, VarianProduct
 from account.models import Warehouse, PermissionWarehouse
 from invoice.models import InvoiceItem, Invoice
+import csv
 
 # Create your views here.
 @login_required
@@ -206,3 +208,22 @@ class UpdateCategory(LoginRequiredMixin, UpdateView):
 class DeleteCategory(LoginRequiredMixin, DeleteView):
     model = Category
     success_url = reverse_lazy('inventory-categories')
+
+@login_required
+def export_products_to_csv(request):
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = "attachment;filename=product_list.csv"
+
+    field_names = ["Name", "SKU", "Category", "Varian", "Stock", "Sell Price", "Buy Price"]
+
+    writer = csv.writer(response)
+    writer.writerow(field_names)
+
+    warehouse = Warehouse.objects.get(pk=request.COOKIES.get('warehouse_id'))
+    varians = VarianProduct.objects.filter(product__warehouse=warehouse)
+
+    for varian in varians:
+        row = [varian.product.name, varian.product.sku, varian.product.category.name, f'{varian.varian_attribute}: {varian.varian_value}', varian.stock, varian.sell_price, varian.buy_price]
+        writer.writerow(row)
+
+    return response

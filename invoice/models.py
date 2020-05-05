@@ -32,6 +32,7 @@ class Invoice(models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICE, default="DRAFT")
     due = models.DateField(blank=True, null=True, help_text='Format: mm-dd-yyyy')
     paid_date = models.DateField(blank=True, null=True, help_text='Format: mm-dd-yyyy')
+    # this is actually subtotal
     total = models.PositiveIntegerField(default=0)
     discount = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(100)])
     notes = models.TextField(blank=True)
