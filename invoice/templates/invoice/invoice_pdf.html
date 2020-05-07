@@ -42,20 +42,20 @@
             </div>
             <div class="p-2 w-50 text-right">
                 <div class="title">{{invoice.invoice_no}}</div>
-                <div>Date: {{ invoice.updated|date:'j F, Y' }}</div>
-                <div>Due: {{invoice.due|date:'j F, Y'}}</div>
+                <div>Tanggal: {{ invoice.updated|date:'j F, Y' }}</div>
+                <div>Jatuh Tempo: {{invoice.due|date:'j F, Y'}}</div>
                 <div>Status: <span class="font-weight-bold">{{invoice.status}}</span></div>
             </div>
         </div>
         <div class="border p-3 mt-2">
-            <div class="title">To:</div>
+            <div class="title">Kepada:</div>
             <div>{{invoice.customer}}</div>
         </div>
         <div class="mt-2">
             <table class="table">
                 <tr>
                     <th>Nama</th>
-                    <th>SKU</th>
+                    <th>Kode</th>
                     <th>Varian</th>
                     <th>Qty</th>
                     <th>Total</th>
@@ -84,7 +84,7 @@
                             <td>Rp {{ subtotal }}</td>
                         </tr>
                         <tr>
-                            <td>Discount</td>
+                            <td>Diskon</td>
                             <td>Rp {{ invoice.get_discount }}</td>
                         </tr>
                         <tr class="font-weight-bold">

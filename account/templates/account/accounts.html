@@ -4,18 +4,18 @@
     <div class="row">
         <div class="col-md-6">
             <div class="widget p-lg">
-                <h4 class="m-b-lg">Warehouse List</h4>
+                <h4 class="m-b-lg">Daftar Gudang / Toko</h4>
                 <div class="d-flex mb-4">
                     <div class="ml-auto">
-                        <a class="btn btn-primary" href={% url 'account-create-warehouse' %}>Add Warehouse</a>
+                        <a class="btn btn-primary" href={% url 'account-create-warehouse' %}>Tambah Gudang / Toko</a>
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <tr>
                             <th>Id</th>
-                            <th>Name</th>
-                            <th>Option</th>
+                            <th>Nama</th>
+                            <th>Opsi</th>
                         </tr>
                         {% for warehouse in warehouses %}
                             <tr>
@@ -23,7 +23,7 @@
                                 <td>{{warehouse.name}}</td>
                                 <td>
                                     <a href={% url 'account-update-warehouse' warehouse.id %} class="btn btn-secondary">Update</a>
-                                    <button class="btn btn-danger ml-2" onClick="deleteWarehouse('{% url 'account-delete-warehouse' warehouse.id %}', '{{warehouse.name}}')">Delete</button>
+                                    <button class="btn btn-danger ml-2" onClick="deleteWarehouse('{% url 'account-delete-warehouse' warehouse.id %}', '{{warehouse.name}}')">Hapus</button>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -33,25 +33,25 @@
         </div>
         <div class="col-md-6">
             <div class="widget p-lg">
-                <h4 class="m-b-lg">Permissions</h4>
+                <h4 class="m-b-lg">Daftar Permission</h4>
                 <div class="d-flex mb-4">
                     <div class="ml-auto">
-                        <a class="btn btn-primary" href={% url 'account-create-permission' %}>Add Permission</a>
+                        <a class="btn btn-primary" href={% url 'account-create-permission' %}>Tambah Permission</a>
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <tr>
                             <th>User</th>
-                            <th>Warehouse</th>
-                            <th>Option</th>
+                            <th>Gudang / Toko</th>
+                            <th>Opsi</th>
                         </tr>
                         {% for perm in permissions %}
                             <tr>
                                 <td>{{perm.user.username}}</td>
                                 <td>{{perm.warehouse.name}}</td>
                                 <td>
-                                    <button class="btn btn-danger ml-2" onClick="deletePerm('{% url 'account-delete-permission' perm.id %}', '{{perm.user.username}} - {{perm.warehouse.name}}')">Delete</button>
+                                    <button class="btn btn-danger ml-2" onClick="deletePerm('{% url 'account-delete-permission' perm.id %}', '{{perm.user.username}} - {{perm.warehouse.name}}')">Hapus</button>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -63,10 +63,10 @@
     <div class="row">
         <div class="col-md-12">
             <div class="widget p-lg">
-                <h4 class="m-b-lg">Accounts</h4>
+                <h4 class="m-b-lg">Daftar Akun</h4>
                 <div class="d-flex mb-4">
                     <div class="ml-auto">
-                        <a class="btn btn-primary" href={% url 'account-create-account' %}>Add Account</a>
+                        <a class="btn btn-primary" href={% url 'account-create-account' %}>Tambah Akun</a>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -75,7 +75,7 @@
                             <th>Id</th>
                             <th>Username</th>
                             <th>Email</th>
-                            <th>Option</th>
+                            <th>Opsi</th>
                         </tr>
                         {% for account in accounts %}
                             {% if not account.is_superuser %}
@@ -85,7 +85,7 @@
                                     <td>{{account.email}}</td>
                                     <td>
                                         <a href={% url 'account-update-account' account.id %} class="btn btn-secondary">Update</a>
-                                        <button class="btn btn-danger ml-2" onClick="deleteAccount('{% url 'account-delete-account' account.id %}', '{{account.username}}')">Delete</button>
+                                        <button class="btn btn-danger ml-2" onClick="deleteAccount('{% url 'account-delete-account' account.id %}', '{{account.username}}')">Hapus</button>
                                     </td>
                                 </tr>
                             {% endif %}
@@ -127,7 +127,7 @@
 
         function deleteWarehouse(url, name) {
             setToken()
-            message = "You sure want to delete this warehouse? " + name
+            message = "Kamu yakin ingin menghapus gudang / toko ini? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
                 $.ajax({
@@ -142,7 +142,7 @@
 
         function deletePerm(url, name) {
             setToken()
-            message = "You sure want to delete this permission? " + name
+            message = "Kamu yakin ingin menghapus permission ini? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
                 $.ajax({
@@ -157,7 +157,7 @@
 
         function deleteAccount(url, name) {
             setToken()
-            message = "You sure want to delete this account? " + name
+            message = "Kamu yakin ingin menghapus akun ini? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
                 $.ajax({

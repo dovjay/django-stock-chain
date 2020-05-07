@@ -3,12 +3,12 @@
 {% block content %}
     <div class="col-md-12">
         <div class="widget p-lg">
-            <h4 class="m-b-lg">Product List</h4>
+            <h4 class="m-b-lg">Daftar Produk</h4>
             <div class="col-md-12">
                 <div class="mb-4 row d-flex">
                     {% if user.is_superuser %}
                         <div class="form-group col-sm-12 col-md-3">
-                            <label for="control-demo-6">Warehouse</label>
+                            <label for="control-demo-6">Gudang/Toko</label>
                             <div id="control-demo-6">
                                 <select class="form-control" onchange="location = this.value;">
                                     {% for item in warehouses %}
@@ -24,20 +24,20 @@
                         </div>
                     {% else %}
                         <div class="form-group col-sm-12 col-md-3">
-                            <label for="wh">Warehouse</label>
+                            <label for="wh">Gudang/Toko</label>
                             <input value="{{warehouse.name}}" class="form-control" disabled />
                         </div>
                     {% endif %}
                     <div class="form-group col-sm-12 col-md-5">
-                        <label for="search">Search</label>
+                        <label for="search">Cari</label>
                         <div class="d-flex">
-                            <input  type="text" id="search" class="form-control" placeholder="Type the Name or SKU">
+                            <input  type="text" id="search" class="form-control" placeholder="Ketik nama atau kode">
                             <button onclick="search()" class="btn btn-secondary"><i class="fa fa-search"></i></button>
                         </div>
                     </div>
                     <div class="ml-auto my-3 mr-3">
                         <a class="btn btn-warning mr-1" href={% url 'inventory-export-to-csv' %}>Export</a>
-                        <a class="btn btn-primary" href={% url 'inventory-create-product'%}>Add Product</a>
+                        <a class="btn btn-primary" href={% url 'inventory-create-product'%}>Tambah Produk</a>
                     </div>
                 </div>
             </div>
@@ -45,12 +45,12 @@
                 <table class="table table-hover">
                     <tr>
                         <th>Id</th>
-                        <th>Picture</th>
-                        <th>Name</th>
-                        <th>SKU/Code</th>
-                        <th>Category</th>
-                        <th>Last Updated</th>
-                        <th>Option</th>
+                        <th>Gambar</th>
+                        <th>Nama</th>
+                        <th>Kode</th>
+                        <th>Kategori</th>
+                        <th>Terakhir Diubah</th>
+                        <th>Opsi</th>
                     </tr>
                     {% for product in products %}
                         <tr>
@@ -63,9 +63,9 @@
                             <td>{{product.category.name}}</td>
                             <td>{{product.last_modified}}</td>
                             <td>
-                                <a href="{% url 'inventory-varian-product' %}?product_id={{product.id}}" class="btn btn-success">See Varian</a>
+                                <a href="{% url 'inventory-varian-product' %}?product_id={{product.id}}" class="btn btn-success">Lihat Varian</a>
                                 <a href={% url 'inventory-update-product' product.id %} class="btn btn-secondary ml-2">Update</a>
-                                <button class="btn btn-danger ml-2" onClick="deleteProduct('{% url 'inventory-delete-product' product.id %}', '{{product.name}}')">Delete</button>
+                                <button class="btn btn-danger ml-2" onClick="deleteProduct('{% url 'inventory-delete-product' product.id %}', '{{product.name}}')">Hapus</button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -92,7 +92,7 @@
                 } 
             })
 
-            message = "You sure want to delete this product? " + name
+            message = "Kamu yakin ingin menghapus produk ini? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
                 $.ajax({

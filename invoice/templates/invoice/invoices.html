@@ -4,11 +4,11 @@
 {% block content %}
     <div class="col-md-12">
         <div class="widget p-lg">
-            <h4 class="m-b-lg">Invoices</h4>
+            <h4 class="m-b-lg">Daftar Invoice</h4>
             <div class="mb-4 row d-flex">
                 {% if user.is_superuser %}
                     <div class="form-group col-sm-12 col-md-3">
-                        <label for="control-demo-6">Warehouse</label>
+                        <label for="control-demo-6">Gudang/Toko</label>
                         <div id="control-demo-6">
                             <select class="form-control" onchange="location = this.value;">
                                 {% for wh in warehouses %}
@@ -24,20 +24,20 @@
                     </div>
                 {% else %}
                     <div class="form-group col-sm-12 col-md-3">
-                        <label for="wh">Warehouse</label>
+                        <label for="wh">Gudang/Toko</label>
                         <input value="{{warehouse.name}}" class="form-control" disabled />
                     </div>
                 {% endif %}
                 <div class="form-group col-sm-12 col-md-3">
-                    <label for="search" class="col-sm-3">Search</label>
+                    <label for="search" class="col-sm-3">Cari</label>
                     <div class="d-flex">
-                        <input  type="text" id="search" class="form-control" placeholder="Type Invoice No, or Customer">
+                        <input  type="text" id="search" class="form-control" placeholder="Ketik no invoice atau customer">
                         <button onclick="search()" class="btn btn-secondary"><i class="fa fa-search"></i></button>
                     </div>
                 </div>
                 <div class="ml-auto my-3 mr-3">
                     <a href={% url 'invoice-export-to-csv' %} class="btn btn-warning mr-1">Export</a>
-                    <a href={% url 'invoice-create' warehouse.id %} class="btn btn-primary">Add Invoice</a>
+                    <a href={% url 'invoice-create' warehouse.id %} class="btn btn-primary">Tambah Invoice</a>
                 </div>
             </div>
 
@@ -47,9 +47,9 @@
                         <th>No</th>
                         <th>Customer</th>
                         <th>Status</th>
-                        <th>Due</th>
+                        <th>Jatuh Tempo</th>
                         <th>Total</th>
-                        <th>Option</th>
+                        <th>Opsi</th>
                     </tr>
                     {% for invoice in invoices %}
                         <tr>
@@ -63,7 +63,7 @@
                                     <a href={% url 'invoice-generate-pdf' invoice.id %} class="btn btn-warning mr-1">Print</a>
                                 {% endif %}
                                 <a href={% url 'invoice-form' invoice.id %} class="btn btn-secondary mr-1">Update</a>
-                                <button class="btn btn-danger" onClick="deleteInvoice('{% url 'invoice-delete' invoice.id %}', '{{invoice.invoice_no}}')">Delete</button>
+                                <button class="btn btn-danger" onClick="deleteInvoice('{% url 'invoice-delete' invoice.id %}', '{{invoice.invoice_no}}')">Hapus</button>
                             </td>
                         </tr>
                     {% endfor %}
@@ -107,7 +107,7 @@
                 } 
             })
 
-            message = "You sure want to delete this invoice? " + name
+            message = "Kamu yakin ingin menghapus invoice ini? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
                 $.ajax({

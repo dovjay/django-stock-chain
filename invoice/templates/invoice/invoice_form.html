@@ -28,8 +28,8 @@
                 <label for="status">Status</label>
                 <select class="form-control mb-3" name="status" value="{{invoice.status}}">
                     <option value="DRAFT">Draft</option>
-                    <option value="DEBT">Debt</option>
-                    <option value="PAID">Paid</option>
+                    <option value="HUTANG">Hutang</option>
+                    <option value="LUNAS">Lunas</option>
                 </select>
                 <label for="customer">Customer</label>
                 <input class="form-control mb-3" list="customerList" oninput="$('#customer').val(this.value)" value="{{invoice.customer|default:''}}" />
@@ -41,39 +41,39 @@
                 </datalist>
             </div>
             <div class="form-group col-md-6">
-                <label for="due">Due</label>
+                <label for="due">Jatuh Tempo</label>
                 <input class="form-control mb-3" type="date" name="due" value="{{invoice.due|date:'Y-m-d'}}" required>
-                <label for="paid_date">Paid Date</label>
+                <label for="paid_date">Tanggal Bayar</label>
                 <input class="form-control mb-3" type="date" value="{{invoice.paid_date|date:'Y-m-d'}}" name="paid_date">
             </div>
         </div>
         <div class="table-responsive">
             <table class="table table-hover" id="itemTable">
                 <tr>
-                    <th>SKU</th>
-                    <th>Varian Product</th>
-                    <th>Price</th>
-                    <th>Qty
-                    <th>Option</th>
+                    <th>Kode</th>
+                    <th>Varian Produk</th>
+                    <th>Qty</th>
+                    <th>Harga</th>
+                    <th>Opsi</th>
                 </tr>
                 {% for item in invoiceitems %}
                     <tr id="item-{{ item.id }}">
                         <td><input id="productList-{{ item.id }}" class="form-control" type="text" disabled value={{ item.sku }}></td>
                         <td><input id="varianProductList-{{ item.id }}" class="form-control" type="text" disabled value="{{ item.varian_product.varian_attribute }}: {{ item.varian_product.varian_value }}"></td>
-                        <td><input id="sellPrice-{{ item.id }}" class="form-control" type="text" disabled value={{ item.price }}></td>
                         <td><input id="qty-{{ item.id }}" class="form-control" type="text" disabled value={{ item.quantity }}></td>
+                        <td><input id="sellPrice-{{ item.id }}" class="form-control" type="text" disabled value={{ item.price }}></td>
                         <td id="action-item-{{ item.id }}">
-                            <button class="btn btn-danger ml-2" onClick="deleteItem('{% url 'invoice-delete-invoice-item' item.id %}', '{{item.varian_product.product.sku}}')">Delete</button>
+                            <button class="btn btn-danger ml-2" onClick="deleteItem('{% url 'invoice-delete-invoice-item' item.id %}', '{{item.varian_product.product.sku}}')">Hapus</button>
                         </td>
                     </tr>
                 {% endfor %}
             </table>
-            <button type="button" id="addItemButton" class="btn btn-success" onClick="addItem()">Add Item</button>
+            <button type="button" id="addItemButton" class="btn btn-success" onClick="addItem()">Tambah Item</button>
         </div>
         <hr>
         <div class="d-flex">
             <div class="form-group col-md-6">
-                <label for="discount">Discount (in percentage)</label>
+                <label for="discount">Diskon (dalam persen)</label>
                 <input class="form-control mb-3" id="discount" type="number" min="0" max="100" value="{{invoice.discount|default:0}}" name="discount" oninput="countTotal()">
                 <label for="notes">Notes:</label>
                 <textarea class="form-control mb-3" rows="5" name="notes"></textarea>
@@ -85,7 +85,7 @@
                         <td id="subTotal">Rp0</td>
                     </tr>
                     <tr>
-                        <td>Discount</td>
+                        <td>Diskon</td>
                         <td id="discountTotal">Rp0</td>
                     </tr>
                     <tr>
@@ -98,8 +98,8 @@
         </div>
         <hr>
         <div class="mt-5">
-            <button type="button" class="btn btn-danger" onClick="goBack()">Cancel</button>
-            <button type="submit" class="btn btn-success">Save</button>
+            <button type="button" class="btn btn-danger" onClick="goBack()">Batal</button>
+            <button type="submit" class="btn btn-success">Simpan</button>
         </div>
     </form>
 {% endblock content %}
@@ -246,11 +246,11 @@
                         <select class="form-control" id="varianProductList-${time}" onchange="selectVarian(this.value)">
                         </select>
                     </td>
-                    <td><input class="form-control" type="number" id="sellPrice-${time}" min="0"></td>
                     <td><input class="form-control" type="number" id="qty-${time}" min="1"></td>
+                    <td><input class="form-control" type="number" id="sellPrice-${time}" min="0"></td>
                     <td>
-                        <button class="btn btn-secondary ml-2" id="saveItem-${time}" onClick="saveItem(event, '{% url 'invoice-save-invoice-item' invoice.id %}')">Save</button>
-                        <button class="btn btn-danger ml-2" onClick="cancelAddItem(event, ${time})">Cancel</button>
+                        <button class="btn btn-secondary ml-2" id="saveItem-${time}" onClick="saveItem(event, '{% url 'invoice-save-invoice-item' invoice.id %}')">Simpan</button>
+                        <button class="btn btn-danger ml-2" onClick="cancelAddItem(event, ${time})">Batal</button>
                     </td>
                 </tr>`)
         }
@@ -263,7 +263,7 @@
 
         function deleteItem(url, name) {
             this.event.preventDefault()
-            message = "You sure want to delete this item? " + name
+            message = "Kamu yakin ingin menghapus item ini? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
                 getCookie()
