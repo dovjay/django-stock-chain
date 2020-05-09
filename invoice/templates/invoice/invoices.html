@@ -52,7 +52,7 @@
                         <th>Opsi</th>
                     </tr>
                     {% for invoice in invoices %}
-                        <tr>
+                        <tr style="cursor:pointer;" onClick="showItem({{ invoice.id }})">
                             <td>{{invoice.invoice_no}}</td>
                             <td>{{invoice.customer|default:'-'}}</td>
                             <td>{{invoice.status}}</td>
@@ -71,6 +71,31 @@
             </div>
         </div>
     </div>
+    <div id="modalInvoiceItem" class="modal mx-auto my-auto w-50 h-50">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="modalTitle">Daftar Barang | INV/bla/bla/bla</h4>
+                <i class="fa fa-times" style="cursor:pointer" onClick="hideItem()"></i>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table" id="tableInvoiceItem">
+                        <thead>
+                            <tr>
+                                <th>Gambar</th>
+                                <th>Nama</th>
+                                <th>Kode</th>
+                                <th>Ukuran</th>
+                                <th>Qty</th>
+                                <th>Harga</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock content %}
 
 {% block script %}
@@ -82,6 +107,36 @@
             keywords = $("#search").val()
             window.location = "{% url 'invoice-list' %}" + "?q=" + keywords + "&warehouse_id=" + warehouse_id
         }
+
+        function showItem(id) {
+            const url = "{% url 'invoice-get-items' 12345 %}".replace("12345", id)
+            $.get(url, function (data, status) {
+                if (status === 'success') {
+                    const { items, invoice_no } = data
+                    $("#modalTitle").text(`Daftar Barang | ${invoice_no}`)
+                    for (item of items) {
+                        const { name, price, quantity, sku, varian_product__product__image, varian_product__size } = item
+                        $("#tableInvoiceItem tbody").empty()
+                        $("#tableInvoiceItem tbody").append(`
+                            <tr>
+                                <td><img src='/media/${varian_product__product__image}/' style='max-width:100px'></td>
+                                <td>${name}</td>
+                                <td>${sku}</td>
+                                <td>${varian_product__size}</td>
+                                <td>${quantity}</td>
+                                <td>${price}</td>
+                            </tr>
+                        `)
+                    }
+                    $("#modalInvoiceItem").show(200)
+                }
+            })
+        }
+
+        function hideItem() {
+            $("#modalInvoiceItem").hide(200)
+        }
+
         function deleteInvoice(url, name) {
             $.ajaxSetup({ 
                 beforeSend: function(xhr, settings) {
