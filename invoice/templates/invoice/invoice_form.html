@@ -59,7 +59,7 @@
                 </tr>
                 {% for item in invoiceitems %}
                     <tr id="item-{{ item.id }}">
-                        <td><img src={{ item.varian_product.product.image.url|default:'/media/default.jpg/' }} style="max-width:100px;" id="productImage-{{ item.id }}"></td>
+                        <td><img src={{ item.varian_product.product.image.url|default:'/media/default.jpg' }} style="max-width:100px;" id="productImage-{{ item.id }}"></td>
                         <td><input id="productList-{{ item.id }}" class="form-control" type="text" disabled value={{ item.sku }}></td>
                         <td><input id="varianProductList-{{ item.id }}" class="form-control" type="text" disabled value="{{ item.varian_product.size }}"></td>
                         <td><input id="qty-{{ item.id }}" class="form-control" type="text" disabled value={{ item.quantity }}></td>
@@ -200,7 +200,7 @@
                     $.get(url, function(data, status){
                         let { varian_products } = data
 
-                        $(`#productImage-${itemId}`).attr("src", `/media/${varian_products[0].product__image}/`)
+                        $(`#productImage-${itemId}`).attr("src", `/media/${varian_products[0].product__image}`)
                         $(`#varianProductList-${itemId}`).empty()
                         $(`#varianProductList-${itemId}`).append(`<option value="">-------------</option>`)
 
@@ -274,7 +274,7 @@
             const time = Date.now()
             localStorage.setItem('isNewItem', true)
             $("#itemTable").append(`<tr id="item-${time}">
-                    <td><img src="/media/default.jpg/" style="max-width:100px;" id="productImage-${time}"></td>
+                    <td><img src="/media/default.jpg" style="max-width:100px;" id="productImage-${time}"></td>
                     <td>
                         <input type="text" class="form-control" id="productList-${time}" list="productsku" value="" oninput="selectSKU()">
                         <datalist id="productsku">
