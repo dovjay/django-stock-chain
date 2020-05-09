@@ -7,19 +7,21 @@
                 <h4 class="m-b-lg">Daftar Gudang / Toko</h4>
                 <div class="d-flex mb-4">
                     <div class="ml-auto">
-                        <a class="btn btn-primary" href={% url 'account-create-warehouse' %}>Tambah Gudang / Toko</a>
+                        <a class="btn btn-primary" href={% url 'account-create-warehouse' %}>Tambah Gudang/Toko</a>
                     </div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <tr>
                             <th>Id</th>
+                            <th>Gambar</th>
                             <th>Nama</th>
                             <th>Opsi</th>
                         </tr>
                         {% for warehouse in warehouses %}
                             <tr>
                                 <td>{{warehouse.id}}</td>
+                                <td><img src={{warehouse.image.url}} style="max-width:150px;"></td>
                                 <td>{{warehouse.name}}</td>
                                 <td>
                                     <a href={% url 'account-update-warehouse' warehouse.id %} class="btn btn-secondary">Update</a>

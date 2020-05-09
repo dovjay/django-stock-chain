@@ -36,13 +36,15 @@
             <div class="table-responsive">
                 <table class="table table-hover">
                     <tr>
-                        <th>Kode</th>
                         <th>Nama</th>
+                        <th>Gambar</th>
+                        <th>Kode</th>
                         <th>Order</th>
                     </tr>
                     {% for item in products %}
                         <tr>
                             <td>{{item.varian_product__product__sku}}</td>
+                            <td><img src={{item.varian_product__product__image__url}} style="max-width:200px;"></td>
                             <td>{{item.varian_product__product__name}}</td>
                             <td>{{item.total_order}}</td>
                         </tr>

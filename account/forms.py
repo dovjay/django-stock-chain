@@ -26,6 +26,7 @@ class WarehouseForm(forms.ModelForm):
         exclude = ['owner']
         labels = {
             'name': 'Nama',
+            'image': 'Gambar',
             'address1': 'Alamat 1',
             'address2': 'Alamat 2',
             'city': 'Kota',
