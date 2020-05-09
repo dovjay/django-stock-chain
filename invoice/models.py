@@ -24,8 +24,8 @@ def increment_invoice_number():
 class Invoice(models.Model):
     STATUS_CHOICE = [
         ("DRAFT", "Draft"),
-        ("DEBT", "Debt"),
-        ("PAID", "Paid")
+        ("HUTANG", "Hutang"),
+        ("LUNAS", "Lunas")
     ]
     invoice_no = models.CharField(max_length=100, editable=False, default=increment_invoice_number)
     customer = models.CharField(max_length=100, blank=True, null=True)

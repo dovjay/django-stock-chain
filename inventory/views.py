@@ -117,10 +117,9 @@ class DeleteProduct(LoginRequiredMixin, DeleteView):
 def varian_product(request):
     if request.GET.get('product_id'):
         product = Product.objects.get(pk=request.GET.get('product_id'))
-        product_sku = product.sku
         varian_products = VarianProduct.objects.filter(product=product)
     else:
-        product_sku = ''
+        product = None
         varian_products = None
 
     if request.COOKIES.get('warehouse_id'):
@@ -139,7 +138,7 @@ def varian_product(request):
     context = {
         'products': products,
         'varian_products': varian_products,
-        'product_sku': product_sku,
+        'product': product,
         'warehouse': warehouse
     }
 

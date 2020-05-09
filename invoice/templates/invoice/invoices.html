@@ -4,11 +4,11 @@
 {% block content %}
     <div class="col-md-12">
         <div class="widget p-lg">
-            <h4 class="m-b-lg">Invoices</h4>
+            <h4 class="m-b-lg">Daftar Invoice</h4>
             <div class="mb-4 row d-flex">
                 {% if user.is_superuser %}
                     <div class="form-group col-sm-12 col-md-3">
-                        <label for="control-demo-6">Warehouse</label>
+                        <label for="control-demo-6">Gudang/Toko</label>
                         <div id="control-demo-6">
                             <select class="form-control" onchange="location = this.value;">
                                 {% for wh in warehouses %}
@@ -24,20 +24,20 @@
                     </div>
                 {% else %}
                     <div class="form-group col-sm-12 col-md-3">
-                        <label for="wh">Warehouse</label>
+                        <label for="wh">Gudang/Toko</label>
                         <input value="{{warehouse.name}}" class="form-control" disabled />
                     </div>
                 {% endif %}
                 <div class="form-group col-sm-12 col-md-3">
-                    <label for="search" class="col-sm-3">Search</label>
+                    <label for="search" class="col-sm-3">Cari</label>
                     <div class="d-flex">
-                        <input  type="text" id="search" class="form-control" placeholder="Type Invoice No, or Customer">
+                        <input  type="text" id="search" class="form-control" placeholder="Ketik no invoice atau customer">
                         <button onclick="search()" class="btn btn-secondary"><i class="fa fa-search"></i></button>
                     </div>
                 </div>
                 <div class="ml-auto my-3 mr-3">
                     <a href={% url 'invoice-export-to-csv' %} class="btn btn-warning mr-1">Export</a>
-                    <a href={% url 'invoice-create' warehouse.id %} class="btn btn-primary">Add Invoice</a>
+                    <a href={% url 'invoice-create' warehouse.id %} class="btn btn-primary">Tambah Invoice</a>
                 </div>
             </div>
 
@@ -47,12 +47,12 @@
                         <th>No</th>
                         <th>Customer</th>
                         <th>Status</th>
-                        <th>Due</th>
+                        <th>Jatuh Tempo</th>
                         <th>Total</th>
-                        <th>Option</th>
+                        <th>Opsi</th>
                     </tr>
                     {% for invoice in invoices %}
-                        <tr>
+                        <tr style="cursor:pointer;" onClick="showItem({{ invoice.id }})">
                             <td>{{invoice.invoice_no}}</td>
                             <td>{{invoice.customer|default:'-'}}</td>
                             <td>{{invoice.status}}</td>
@@ -63,11 +63,36 @@
                                     <a href={% url 'invoice-generate-pdf' invoice.id %} class="btn btn-warning mr-1">Print</a>
                                 {% endif %}
                                 <a href={% url 'invoice-form' invoice.id %} class="btn btn-secondary mr-1">Update</a>
-                                <button class="btn btn-danger" onClick="deleteInvoice('{% url 'invoice-delete' invoice.id %}', '{{invoice.invoice_no}}')">Delete</button>
+                                <button class="btn btn-danger" onClick="deleteInvoice('{% url 'invoice-delete' invoice.id %}', '{{invoice.invoice_no}}')">Hapus</button>
                             </td>
                         </tr>
                     {% endfor %}
                 </table>
+            </div>
+        </div>
+    </div>
+    <div id="modalInvoiceItem" class="modal mx-auto my-auto w-50 h-50">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="modalTitle">Daftar Barang | INV/bla/bla/bla</h4>
+                <i class="fa fa-times" style="cursor:pointer" onClick="hideItem()"></i>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table" id="tableInvoiceItem">
+                        <thead>
+                            <tr>
+                                <th>Gambar</th>
+                                <th>Nama</th>
+                                <th>Kode</th>
+                                <th>Ukuran</th>
+                                <th>Qty</th>
+                                <th>Harga</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -82,6 +107,36 @@
             keywords = $("#search").val()
             window.location = "{% url 'invoice-list' %}" + "?q=" + keywords + "&warehouse_id=" + warehouse_id
         }
+
+        function showItem(id) {
+            const url = "{% url 'invoice-get-items' 12345 %}".replace("12345", id)
+            $.get(url, function (data, status) {
+                if (status === 'success') {
+                    const { items, invoice_no } = data
+                    $("#modalTitle").text(`Daftar Barang | ${invoice_no}`)
+                    for (item of items) {
+                        const { name, price, quantity, sku, varian_product__product__image, varian_product__size } = item
+                        $("#tableInvoiceItem tbody").empty()
+                        $("#tableInvoiceItem tbody").append(`
+                            <tr>
+                                <td><img src='/media/${varian_product__product__image}/' style='max-width:100px'></td>
+                                <td>${name}</td>
+                                <td>${sku}</td>
+                                <td>${varian_product__size}</td>
+                                <td>${quantity}</td>
+                                <td>${price}</td>
+                            </tr>
+                        `)
+                    }
+                    $("#modalInvoiceItem").show(200)
+                }
+            })
+        }
+
+        function hideItem() {
+            $("#modalInvoiceItem").hide(200)
+        }
+
         function deleteInvoice(url, name) {
             $.ajaxSetup({ 
                 beforeSend: function(xhr, settings) {
@@ -107,7 +162,7 @@
                 } 
             })
 
-            message = "You sure want to delete this invoice? " + name
+            message = "Kamu yakin ingin menghapus invoice ini? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
                 $.ajax({

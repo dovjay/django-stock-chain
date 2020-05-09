@@ -26,24 +26,24 @@
         Inventory App
         {% comment %} <img src="{% static 'inventory/img/logo-admin.png' %}" alt=""> {% endcomment %}
       </div>
-      <a href={% url 'inventory-create-product'%} class="btn btn-danger w-75">Add Product</a>
+      <a href={% url 'inventory-create-product'%} class="btn btn-danger w-75">Tambah Produk</a>
     </div>
     <!-- end with head -->
     <!-- start the list -->
     <div id="list">
       <ul class="nav flex-column">
         {% comment %} Real Navbar start here {% endcomment %}
-        <li class="nav-item"><a href="/" class="nav-link" ><i class="fa fa-adjust"></i>Dashboard</a></li>
-        <li class="nav-item"><a href={% url 'account-contacts' %} class="nav-link"><i class="fa fa-user"></i>Contacts</a></li>
-        <li class="nav-item"><a href="#inventory-tab" class="nav-link collapsed" data-toggle="collapse"><i class="fa fa-table"></i>Inventory<span class="sub-ico"><i class="fa fa-angle-down"></i></span></a></li>
+        <li class="nav-item"><a href="/" class="nav-link" ><i class="fa fa-adjust"></i>Dasbor</a></li>
+        <li class="nav-item"><a href={% url 'account-contacts' %} class="nav-link"><i class="fa fa-user"></i>Kontak</a></li>
+        <li class="nav-item"><a href="#inventory-tab" class="nav-link collapsed" data-toggle="collapse"><i class="fa fa-table"></i>Inventori<span class="sub-ico"><i class="fa fa-angle-down"></i></span></a></li>
         <li class="sub collapse" id="inventory-tab">
-            <a href={% url 'inventory-products' %} class="nav-link" data-parent="#inventory-tab">Products</a>
-            <a href={% url 'inventory-varian-product' %} class="nav-link" data-parent="#inventory-tab">Varian Products</a>
-            <a href={% url 'inventory-categories' %} class="nav-link" data-parent="#inventory-tab">Categories</a>
+            <a href={% url 'inventory-products' %} class="nav-link" data-parent="#inventory-tab">Produk</a>
+            <a href={% url 'inventory-varian-product' %} class="nav-link" data-parent="#inventory-tab">Varian Produk</a>
+            <a href={% url 'inventory-categories' %} class="nav-link" data-parent="#inventory-tab">Kategori</a>
         </li>
-        <li class="nav-item"><a href={% url 'invoice-list' %} class="nav-link"><i class="fa fa-money-bill-alt"></i>Invoices</a></li>
+        <li class="nav-item"><a href={% url 'invoice-list' %} class="nav-link"><i class="fa fa-money-bill-alt"></i>Invoice</a></li>
         {% if user.is_superuser %}
-          <li class="nav-item"><a href={% url 'account-manage-accounts' %} class="nav-link"><i class="fa fa-users"></i>Manage Accounts</a></li>
+          <li class="nav-item"><a href={% url 'account-manage-accounts' %} class="nav-link"><i class="fa fa-users"></i>Pengaturan</a></li>
         {% endif %}
       </ul>
     </div>
@@ -59,7 +59,6 @@
         <div class="left">
           <button id="on" class="btn btn-info"><i class="fa fa-bars"></i></button>
           <button id="off" class="btn btn-info hide"><i class="fa fa-align-left"></i></button>
-          <a class="btn btn-info hidden-xs-down" href="/"><i class="fa fa-home"></i>Back Home</a>
         </div>
         <div class="right">
           {% comment %} <button class="btn btn-info hidden-xs-down"><i class="fa fa-bell"></i></button>

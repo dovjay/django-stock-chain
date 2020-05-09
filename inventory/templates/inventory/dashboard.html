@@ -3,13 +3,13 @@
 {% block content %}
     <div class="col-md-12">
         <div class="widget p-lg">
-            <h4 class="m-b-lg">Dashboard</h4>
+            <h4 class="m-b-lg">Dashbor</h4>
             
             <div class="row">
                 <div class="form-group col-sm-12 col-md-5">
-                    <label for="search">Search</label>
+                    <label for="search">Cari</label>
                     <div class="d-flex">
-                        <input  type="text" id="search" class="form-control" placeholder="Type product name or SKU">
+                        <input  type="text" id="search" class="form-control" placeholder="Ketik nama produk atau kode">
                         <button onclick="search()" class="btn btn-secondary"><i class="fa fa-search"></i></button>
                     </div>
                 </div>
@@ -17,11 +17,11 @@
 
             <div class="row p-3">
                 <div class="col-md-3 bg-warning rounded text-center my-1" style="padding: 10px; color: white;">
-                    <h3>Total Product</h3>
+                    <h3>Total Produk</h3>
                     <h4>{{total_product}}</h4>
                 </div>
                 <div class="col-md-3 bg-danger mx-auto rounded text-center my-1" style="padding: 10px; color: white;">
-                    <h3>Total Assets</h3>
+                    <h3>Total Aset</h3>
                     <h4>Rp {{total_assets}}</h4>
                 </div>
                 <div class="col-md-3 bg-success rounded text-center my-1" style="padding: 10px; color: white;">
@@ -31,18 +31,20 @@
             </div>
         </div>
         <div class="widget p-lg">
-            <h4 class="m-b-lg">Top 10 Selling Product</h4>
+            <h4 class="m-b-lg">Top 10 Produk Paling Banyak Terjual</h4>
             
             <div class="table-responsive">
                 <table class="table table-hover">
                     <tr>
-                        <th>SKU</th>
-                        <th>Name</th>
-                        <th>Orders</th>
+                        <th>Nama</th>
+                        <th>Gambar</th>
+                        <th>Kode</th>
+                        <th>Order</th>
                     </tr>
                     {% for item in products %}
                         <tr>
                             <td>{{item.varian_product__product__sku}}</td>
+                            <td><img src={{item.varian_product__product__image__url}} style="max-width:200px;"></td>
                             <td>{{item.varian_product__product__name}}</td>
                             <td>{{item.total_order}}</td>
                         </tr>

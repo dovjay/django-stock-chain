@@ -3,57 +3,83 @@
 {% block content %}
     <div class="col-md-12">
         <div class="widget p-lg">
-            <h4 class="m-b-lg">Varian Product List</h4>
+            <h4 class="m-b-lg">Daftar Varian Produk</h4>
             <div class="d-flex row">
                 <div class="form-group mr-3 d-flex flex-column col-sm-12 col-md-3">
-                    <label for="wh">Warehouse</label>
+                    <label for="wh">Gudang</label>
                     <input value="{{warehouse.name}}" class="form-control" disabled />
                 </div>
                 <div class="d-flex col-sm-12 col-md-3">
                     <div class="form-group">
-                        <label for="control-demo-6">Select a Product</label>
+                        <label for="control-demo-6">Input Kode Produk</label>
                         <div id="control-demo-6">
-                            <input type="text" class="form-control" list="productname" value="{{product_sku}}">
+                            <input type="text" class="form-control" list="productname" value="">
                             <datalist id="productname">
-                                {% for product in products %}
-                                    <option data-value="{% url 'inventory-varian-product' %}?product_id={{product.id}}">{{product.sku}}</option>
+                                {% for item in products %}
+                                    <option data-value="{% url 'inventory-varian-product' %}?product_id={{item.id}}">{{item.sku}}</option>
                                 {% endfor %}
                             </datalist>
                         </div>
                     </div>
                 </div>
                 <div class="ml-auto">
-                    <button onclick="addVarian()" class="btn btn-primary my-3 mr-4">Add Varian</button>
+                    <button onclick="addVarian()" class="btn btn-primary my-3 mr-4">Tambah Varian</button>
                 </div>
+            </div>
+
+            <div class="mt-3">
+                {% if product %}
+                    <h4>Product Info</h4>
+                    <div class="table-responsive col-md-6 col-sm-12">
+                        <table class="table">
+                            <tr>
+                                <td>Nama</td>
+                                <td>{{product.name}}</td>
+                            </tr>
+                            <tr>
+                                <td>Kode</td>
+                                <td>{{product.sku}}</td>
+                            </tr>
+                            <tr>
+                                <td>Kategori</td>
+                                <td>{{product.category}}</td>
+                            </tr>
+                            <tr>
+                                <td>Gambar</td>
+                                <td><img src={{product.image.url}} style="max-width:200px;"></td>
+                            </tr>
+                        </table>
+                    </div>
+                {% endif %}
             </div>
             
             <div class="table-responsive">
                 <table class="table table-hover">
                     <tr>
-                        <th>Attribute</th>
-                        <th>Value</th>
-                        <th>Buy Price</th>
-                        <th>Sell Price</th>
-                        <th>Stock</th>
-                        <th>Option</th>
+                        <th>Ukuran</th>
+                        <th>Tipe Produk</th>
+                        <th>Harga Beli</th>
+                        <th>Harga Jual</th>
+                        <th>Stok</th>
+                        <th>Opsi</th>
                     </tr>
                     {% if varian_products %}
                         {% for object in varian_products %}
                             <tr>
-                                <td>{{object.varian_attribute}}</td>
-                                <td>{{object.varian_value}}</td>
+                                <td>{{object.size}}</td>
+                                <td>{{object.product_type}}</td>
                                 <td>{{object.buy_price}}</td>
                                 <td>{{object.sell_price}}</td>
                                 <td>{{object.stock}}</td>
                                 <td>
                                     <a href={% url 'inventory-update-varian-product' object.id %} class="btn btn-secondary">Update</a>
-                                    <button class="btn btn-danger ml-2" onClick="deleteVarianProduct('{% url 'inventory-delete-varian-product' object.id %}', '{{object.varian_attribute}}: {{object.varian_value}}')">Delete</button>
+                                    <button class="btn btn-danger ml-2" onClick="deleteVarianProduct('{% url 'inventory-delete-varian-product' object.id %}', '{{object.varian_attribute}}: {{object.varian_value}}')">Hapus</button>
                                 </td>
                             </tr>
                         {% endfor %}
                     {% else %}
                         <div>
-                            <p>Varian not found. Please click the 'Add Varian' button to add new item.</p>
+                            <p>Varian tidak ditemukan. Klik tombol 'Tambah Varian' untuk menambah varian</p>
                         </div>
                     {% endif %}
                 </table>
@@ -91,7 +117,7 @@
 
                 return vars.product_id
             } else {
-                alert('Please select a product first')
+                alert('Tolong pilih satu product sebelum menambah varian')
             }
         }
 
@@ -126,7 +152,7 @@
                 } 
             })
 
-            message = "You sure want to delete this varian? " + name
+            message = "Kamu yakin ingin menghapus varian ini? " + name
             confirm_delete = confirm(message)
             if (confirm_delete) {
                 $.ajax({

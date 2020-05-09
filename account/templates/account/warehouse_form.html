@@ -2,12 +2,12 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <h2>Warehouse Form</h2>
-    <div class="alert alert-warning">Note: You need to create a warehouse first before accessing product, varian product, and invoice</div>
+    <h2>Form Gudang/Toko</h2>
+    <div class="alert alert-warning">Note: Kamu harus membuat gudang / toko sebelum bisa mengakses daftar produk, varian produk, dan invoice</div>
     <form method="POST">{% csrf_token %}
         {{ form|crispy }}
-        <button type="button" class="btn btn-danger" onClick="goBack()">Cancel</button>
-        <button type="submit" class="btn btn-success">Save</button>
+        <button type="button" class="btn btn-danger" onClick="goBack()">Batal</button>
+        <button type="submit" class="btn btn-success">Simpan</button>
     </form>
 {% endblock content %}
 
