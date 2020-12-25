@@ -1,6 +1,6 @@
 # django-stock-chain
 --------------------
-Kita membangun Django Stock Chain application untuk mempermudah pekerjaan sehari-hari di gudang. Dibuat menggunakan Django dan beberapa library jQuery
+Kami membangun Django Stock Chain application untuk mempermudah pekerjaan sehari-hari di gudang dan toko. Aplikasi ini dibuat menggunakan Django.
 
 ## Table of Contents
 * [Technologies](#technologies)
