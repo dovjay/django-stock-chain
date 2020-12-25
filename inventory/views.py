@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.db.models import Q, Sum
 from django.db.models.functions import Trim
@@ -60,7 +61,10 @@ def products(request):
             products = Product.objects.filter(warehouse=warehouse)
 
     else:
-        permission = PermissionWarehouse.objects.get(user=request.user)
+        try:
+            permission = PermissionWarehouse.objects.get(user=request.user)
+        except ObjectDoesNotExist:
+            return HttpResponse("403 Forbidden: Coba minta akses ke admin untuk mengakses data")
         warehouse = Warehouse.objects.get(pk=permission.warehouse.pk)
         warehouses = warehouse
 
@@ -123,9 +127,14 @@ def varian_product(request):
         varian_products = None
 
     if request.COOKIES.get('warehouse_id'):
+        warehouses = Warehouse.objects.all()
+        if len(warehouses) == 0:
+            return redirect(reverse_lazy('account-create-warehouse'))
         warehouse = Warehouse.objects.get(pk=request.COOKIES.get('warehouse_id'))
     elif not request.COOKIES.get('warehouse_id') and request.user.is_superuser:
         warehouses = Warehouse.objects.all()
+        if len(warehouses) == 0:
+            return redirect(reverse_lazy('account-create-warehouse'))
         warehouse = warehouses[0]
     elif not request.COOKIES.get('warehouse_id') and not request.user.is_superuser:
         permission = PermissionWarehouse.objects.get(user=request.user)
