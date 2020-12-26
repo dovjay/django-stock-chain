@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.urls import reverse
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
@@ -40,7 +41,10 @@ def invoices(request):
             return redirect(f'{url}?{qs}')
 
     else:
-        permission = PermissionWarehouse.objects.get(user=request.user)
+        try:
+            permission = PermissionWarehouse.objects.get(user=request.user)
+        except ObjectDoesNotExist:
+            return HttpResponse("403 Forbidden: Coba minta akses ke admin untuk mengakses data")
         warehouse = Warehouse.objects.get(pk=permission.warehouse.pk)
         warehouses = warehouse
 

@@ -137,7 +137,10 @@ def varian_product(request):
             return redirect(reverse_lazy('account-create-warehouse'))
         warehouse = warehouses[0]
     elif not request.COOKIES.get('warehouse_id') and not request.user.is_superuser:
-        permission = PermissionWarehouse.objects.get(user=request.user)
+        try:
+            permission = PermissionWarehouse.objects.get(user=request.user)
+        except ObjectDoesNotExist:
+            return HttpResponse("403 Forbidden: Coba minta akses ke admin untuk mengakses data")
         warehouse = Warehouse.objects.get(pk=permission.warehouse.id)
     else:
         return redirect(reverse_lazy('account-create-warehouse'))
