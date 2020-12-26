@@ -127,6 +127,12 @@ def varian_product(request):
         varian_products = None
 
     if request.COOKIES.get('warehouse_id'):
+        if not request.user.is_superuser:
+            try:
+                warehouse_pk = request.COOKIES.get('warehouse_id')
+                permission = PermissionWarehouse.objects.get(user=request.user, warehouse=warehouse_pk)
+            except ObjectDoesNotExist:
+                return HttpResponse("403 Forbidden: Coba minta akses ke admin untuk mengakses data")
         warehouses = Warehouse.objects.all()
         if len(warehouses) == 0:
             return redirect(reverse_lazy('account-create-warehouse'))
