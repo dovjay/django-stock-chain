@@ -37,9 +37,9 @@
         <li class="nav-item"><a href={% url 'account-contacts' %} class="nav-link"><i class="fa fa-user"></i>Kontak</a></li>
         <li class="nav-item"><a href="#inventory-tab" class="nav-link collapsed" data-toggle="collapse"><i class="fa fa-table"></i>Inventori<span class="sub-ico"><i class="fa fa-angle-down"></i></span></a></li>
         <li class="sub collapse" id="inventory-tab">
+            <a href={% url 'inventory-categories' %} class="nav-link" data-parent="#inventory-tab">Kategori</a>
             <a href={% url 'inventory-products' %} class="nav-link" data-parent="#inventory-tab">Produk</a>
             <a href={% url 'inventory-varian-product' %} class="nav-link" data-parent="#inventory-tab">Varian Produk</a>
-            <a href={% url 'inventory-categories' %} class="nav-link" data-parent="#inventory-tab">Kategori</a>
         </li>
         <li class="nav-item"><a href={% url 'invoice-list' %} class="nav-link"><i class="fa fa-money-bill-alt"></i>Invoice</a></li>
         {% if user.is_superuser %}

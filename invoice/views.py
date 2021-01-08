@@ -74,6 +74,7 @@ def invoice_form(request, invoice_id):
     if request.method == "POST":
         invoice = Invoice.objects.get(pk=invoice_id)
         form = InvoiceForm(request.POST, instance=invoice)
+        print(form)
         if form.is_valid():
             form.save()
             return redirect(reverse('invoice-list'))
@@ -103,7 +104,7 @@ def delete_invoice(request, pk):
 @login_required
 def varian_product_list(request, product_id):
     product = Product.objects.get(pk=product_id)
-    varian_products = VarianProduct.objects.filter(product=product).values('size', 'stock', 'sell_price', 'id', 'product__name', 'product__image')
+    varian_products = VarianProduct.objects.filter(product=product).values('size', 'stock', 'sell_price', 'id', 'product__name', 'product__image', 'product_type')
     data = {
         'varian_products': list(varian_products)
     }
@@ -112,7 +113,7 @@ def varian_product_list(request, product_id):
 @login_required
 def get_invoice_items(request, invoice_id):
     invoice = Invoice.objects.get(pk=invoice_id)
-    items = InvoiceItem.objects.filter(invoice=invoice).values('varian_product__product__image', 'varian_product__size', 'sku', 'price', 'quantity', 'name')
+    items = InvoiceItem.objects.filter(invoice=invoice).values('varian_product__product__image', 'varian_product__size', 'varian_product__product_type', 'sku', 'price', 'quantity', 'name')
     data = {
         'invoice_no': invoice.invoice_no,
         'items': list(items)

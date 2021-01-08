@@ -34,7 +34,7 @@ class Invoice(models.Model):
     paid_date = models.DateField(blank=True, null=True, help_text='Format: mm-dd-yyyy')
     # this is actually subtotal
     total = models.PositiveIntegerField(default=0)
-    discount = models.PositiveSmallIntegerField(default=0, validators=[MaxValueValidator(100)])
+    discount = models.PositiveIntegerField(default=0)
     notes = models.TextField(blank=True)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.CASCADE)
     created = models.DateField(auto_now_add=True, editable=False)
@@ -43,11 +43,8 @@ class Invoice(models.Model):
     def __str__(self):
         return self.invoice_no
 
-    def get_discount(self):
-        return round(self.total * (self.discount * 0.01))
-
     def get_total(self):
-        return self.total - self.get_discount()
+        return self.total - self.discount
 
 class InvoiceItem(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)

@@ -57,6 +57,7 @@
                 <table class="table table-hover">
                     <tr>
                         <th>Ukuran</th>
+                        <th>Seri</th>
                         <th>Tipe Produk</th>
                         <th>Harga Beli</th>
                         <th>Harga Jual</th>
@@ -67,6 +68,7 @@
                         {% for object in varian_products %}
                             <tr>
                                 <td>{{object.size}}</td>
+                                <td>{{object.seri}}</td>
                                 <td>{{object.product_type}}</td>
                                 <td>{{object.buy_price}}</td>
                                 <td>{{object.sell_price}}</td>
