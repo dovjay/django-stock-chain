@@ -32,12 +32,13 @@ class VarianProduct(models.Model):
         ("100-140", "100-140"),
         ("150-180", "150-180")
     ]
-    size = models.CharField(max_length=10, choices=ATTR_CHOICE, default="1-3")
-    product_type = models.CharField(max_length=100)
+    size = models.CharField(max_length=20, default="1-3")
+    seri = models.PositiveSmallIntegerField(default=1, help_text="Potongan seri")
+    product_type = models.CharField(max_length=100, help_text="Bisa input warna, atau tipe khusus")
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     stock = models.PositiveIntegerField(default=0)
     sell_price = models.PositiveIntegerField(default=0, blank=True, null=True)
     buy_price = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return f'{self.product} - Ukuran: {self.size}'
+        return f'{self.product} - {self.size} - {self.product_type}'

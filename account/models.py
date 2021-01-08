@@ -23,8 +23,8 @@ class Contact(models.Model):
 class Warehouse(models.Model):
     name = models.CharField(max_length=200)
     image = models.ImageField(default='default.jpg', blank=True, upload_to='warehouse_images/')
-    address1 = models.CharField(max_length=50, blank=True)
-    address2 = models.CharField(max_length=50, blank=True)
+    address1 = models.CharField(max_length=150, blank=True)
+    address2 = models.CharField(max_length=150, blank=True)
     city = models.CharField(max_length=50, blank=True)
     province = models.CharField(max_length=50, blank=True)
     nation = models.CharField(max_length=50, blank=True)

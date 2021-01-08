@@ -231,7 +231,7 @@ def export_products_to_csv(request):
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = "attachment;filename=product_list.csv"
 
-    field_names = ["Name", "SKU", "Category", "Varian", "Stock", "Sell Price", "Buy Price"]
+    field_names = ["Name", "Kode", "Seri", "Category", "Varian", "Stock", "Sell Price", "Buy Price"]
 
     writer = csv.writer(response)
     writer.writerow(field_names)
@@ -240,7 +240,7 @@ def export_products_to_csv(request):
     varians = VarianProduct.objects.filter(product__warehouse=warehouse)
 
     for varian in varians:
-        row = [varian.product.name, varian.product.sku, varian.product.category.name, f'{varian.varian_attribute}: {varian.varian_value}', varian.stock, varian.sell_price, varian.buy_price]
+        row = [varian.product.name, varian.product.sku, varian.seri, varian.product.category.name, f'{varian.size} / {varian.product_type}', varian.stock, varian.sell_price, varian.buy_price]
         writer.writerow(row)
 
     return response

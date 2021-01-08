@@ -74,7 +74,7 @@
     <div id="modalInvoiceItem" class="modal mx-auto my-auto w-50 h-50">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 id="modalTitle">Daftar Barang | INV/bla/bla/bla</h4>
+                <h4 id="modalTitle">Daftar Barang | INV/abc/abc/abc</h4>
                 <i class="fa fa-times" style="cursor:pointer" onClick="hideItem()"></i>
             </div>
             <div class="modal-body">
@@ -85,7 +85,7 @@
                                 <th>Gambar</th>
                                 <th>Nama</th>
                                 <th>Kode</th>
-                                <th>Ukuran</th>
+                                <th>Varian</th>
                                 <th>Qty</th>
                                 <th>Harga</th>
                             </tr>
@@ -114,15 +114,15 @@
                 if (status === 'success') {
                     const { items, invoice_no } = data
                     $("#modalTitle").text(`Daftar Barang | ${invoice_no}`)
+                    $("#tableInvoiceItem tbody").empty()
                     for (item of items) {
-                        const { name, price, quantity, sku, varian_product__product__image, varian_product__size } = item
-                        $("#tableInvoiceItem tbody").empty()
+                        const { name, price, quantity, sku, varian_product__product__image, varian_product__size, varian_product__product_type } = item
                         $("#tableInvoiceItem tbody").append(`
                             <tr>
                                 <td><img src='/media/${varian_product__product__image}' style='max-width:100px'></td>
                                 <td>${name}</td>
                                 <td>${sku}</td>
-                                <td>${varian_product__size}</td>
+                                <td>${varian_product__size} / ${varian_product__product_type}</td>
                                 <td>${quantity}</td>
                                 <td>${price}</td>
                             </tr>

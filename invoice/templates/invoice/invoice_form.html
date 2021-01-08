@@ -52,7 +52,7 @@
                 <tr>
                     <th>Gambar</th>
                     <th>Kode</th>
-                    <th>Ukuran</th>
+                    <th>Varian</th>
                     <th>Qty</th>
                     <th>Harga</th>
                     <th>Aksi</th>
@@ -61,7 +61,7 @@
                     <tr id="item-{{ item.id }}">
                         <td><img src={{ item.varian_product.product.image.url|default:'/media/default.jpg' }} style="max-width:100px;" id="productImage-{{ item.id }}"></td>
                         <td><input id="productList-{{ item.id }}" class="form-control" type="text" disabled value={{ item.sku }}></td>
-                        <td><input id="varianProductList-{{ item.id }}" class="form-control" type="text" disabled value="{{ item.varian_product.size }}"></td>
+                        <td><input id="varianProductList-{{ item.id }}" class="form-control" type="text" disabled value="{{ item.varian_product.size }} / {{ item.varian_product.product_type }}"></td>
                         <td><input id="qty-{{ item.id }}" class="form-control" type="text" disabled value={{ item.quantity }}></td>
                         <td><input id="sellPrice-{{ item.id }}" class="form-control" type="text" disabled value={{ item.price }}></td>
                         <td id="action-item-{{ item.id }}">
@@ -75,8 +75,8 @@
         <hr>
         <div class="d-flex">
             <div class="form-group col-md-6">
-                <label for="discount">Diskon (dalam persen)</label>
-                <input class="form-control mb-3" id="discount" type="number" min="0" max="100" value="{{invoice.discount|default:0}}" name="discount" oninput="countTotal()">
+                <label for="discount">Diskon (nominal uang)*</label>
+                <input class="form-control mb-3" id="discount" type="number" min="0" value="{{invoice.discount|default:0}}" name="discount" oninput="countTotal()">
                 <label for="notes">Notes:</label>
                 <textarea class="form-control mb-3" rows="5" name="notes"></textarea>
             </div>
@@ -165,7 +165,7 @@
 
         function countTotal() {
             let subTotal = 0
-            let discount = $('#discount').val() * 0.01
+            let discount = $('#discount').val()
             let total = 0
 
             // count subTotal price
@@ -176,8 +176,8 @@
                 subTotal += Number(price) * Number(qty)
             }
 
-            discount = Math.round(subTotal * discount)
             total = subTotal - discount
+            console.log(total, subTotal, discount)
             $('#subTotal').text(`Rp ${subTotal}`)
             $('#discountTotal').text(`Rp ${discount}`)
             $('#total').text(`Rp ${total}`)
@@ -205,16 +205,16 @@
                         $(`#varianProductList-${itemId}`).append(`<option value="">-------------</option>`)
 
                         for (let i = 0; i < varian_products.length; i++) {
-                            let { size, sell_price, stock, product__name, id } = varian_products[i]
+                            let { size, sell_price, stock, product__name, id, product_type } = varian_products[i]
                             let value = {
                                 "price": sell_price, 
                                 "stock": stock, 
                                 "itemId": itemId,
                                 "id": id,
-                                "product_name": product__name
+                                "product_name": product__name,
+                                "product_type": product_type
                             }
-                            $(`#varianProductList-${itemId}`).append(`<option value='${JSON.stringify(value)}'>${size}</option>`)
-
+                            $(`#varianProductList-${itemId}`).append(`<option value='${JSON.stringify(value)}'>${size} / ${product_type}</option>`)
                         }
                     });
                     break
@@ -242,7 +242,7 @@
             const quantity = $(`#qty-${itemId}`)
 
             if (Number(quantity.prop('max')) < Number(quantity.val())) {
-                alert("Quantity exceeding maximum stock in inventory!")
+                alert("Stok habis!")
                 return false
             }
             const invoice = "{{ invoice.id }}"
@@ -258,7 +258,7 @@
             // Check if there is null val in input before saving item
             for (prop in data) {
                 if (!data[prop]) {
-                    alert('Please fill all the input')
+                    alert('Tolong masukkan semua input')
                     validated = false
                     break
                 }
