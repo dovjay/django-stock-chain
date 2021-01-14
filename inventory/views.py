@@ -6,8 +6,11 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .forms import ProductForm, ProductSUForm, VarianProductForm, CategoryForm
+from django.views.decorators.clickjacking import xframe_options_exempt
+from bootstrap_modal_forms.generic import BSModalCreateView, BSModalUpdateView
+from .forms import ProductForm, ProductSUForm, VarianProductForm, CategoryForm, VarianProductBSForm
 from .models import Category, Product, VarianProduct
 from account.models import Warehouse, PermissionWarehouse
 from invoice.models import InvoiceItem, Invoice
@@ -177,7 +180,7 @@ class CreateVarianProduct(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form, *args, **kwargs):
         try:
-            form.instance.product = Product.objects.get(id=self.kwargs.get('project_id'))
+            form.instance.product = Product.objects.get(id=self.kwargs.get('product_id'))
         except:
             return False
         return super(CreateVarianProduct, self).form_valid(form)
@@ -196,6 +199,38 @@ class UpdateVarianProduct(LoginRequiredMixin, UpdateView):
 class DeleteVarianProduct(LoginRequiredMixin, DeleteView):
     model = VarianProduct
     success_url = reverse_lazy('inventory-varian-product')
+
+# @method_decorator(xframe_options_exempt, name='dispatch')
+class CreateBSVarianProduct(LoginRequiredMixin, BSModalCreateView):
+    model = VarianProduct
+    template_name = 'inventory/varian_modal_create.html'
+    form_class = VarianProductBSForm
+    success_message = 'Sukses: Varian produk berhasil ditambah.'
+
+    def form_valid(self, form, *args, **kwargs):
+        try:
+            form.instance.product = Product.objects.get(id=self.kwargs.get('product_id'))
+        except:
+            return False
+        return super(CreateBSVarianProduct, self).form_valid(form)
+
+    def get_success_url(self):
+        url = reverse_lazy('inventory-varian-product')
+        qs = f'product_id={self.object.product.id}'
+        success_url = f'{url}?{qs}'
+        return success_url
+
+class UpdateBSVarianProduct(LoginRequiredMixin, BSModalUpdateView):
+    model = VarianProduct
+    template_name = 'inventory/varian_modal_update.html'
+    form_class = VarianProductBSForm
+    success_message = 'Sukses: Varian produk berhasil ter update'
+    
+    def get_success_url(self):
+        url = reverse_lazy('inventory-varian-product')
+        qs = f'product_id={self.object.product.id}'
+        success_url = f'{url}?{qs}'
+        return success_url
 
 @login_required
 def categories(request):

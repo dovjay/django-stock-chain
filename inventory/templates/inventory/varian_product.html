@@ -23,7 +23,8 @@
                     </div>
                 </div>
                 <div class="ml-auto">
-                    <button onclick="addVarian()" class="btn btn-primary my-3 mr-4">Tambah Varian</button>
+                    <button id="create-varian" class="btn btn-primary my-3 mr-4" type="button" name="button">Tambah Varian</button>
+                    <!-- <button onclick="addVarian()" class="btn btn-primary my-3 mr-4">Tambah Varian</button> -->
                 </div>
             </div>
 
@@ -74,7 +75,7 @@
                                 <td>{{object.sell_price}}</td>
                                 <td>{{object.stock}}</td>
                                 <td>
-                                    <a href={% url 'inventory-update-varian-product' object.id %} class="btn btn-secondary">Update</a>
+                                    <button data-form-url={% url 'inventory-update-bs-varian-product' object.id %} type="button" class="btn btn-secondary update-varian">Update</a>
                                     <button class="btn btn-danger ml-2" onClick="deleteVarianProduct('{% url 'inventory-delete-varian-product' object.id %}', '{{object.varian_attribute}}: {{object.varian_value}}')">Hapus</button>
                                 </td>
                             </tr>
@@ -86,6 +87,12 @@
                     {% endif %}
                 </table>
             </div>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content"></div>
         </div>
     </div>
 {% endblock content %}
@@ -166,5 +173,21 @@
                 })
             }
         }
+    </script>
+    <script type="text/javascript">
+        function createVarianModalForm() {
+            product_id = getProductId()
+            $(document).ready(function() {
+                url = "{% url 'inventory-create-bs-varian-product' 12345 %}".replace(/12345/, product_id.toString())
+                $("#create-varian").modalForm({ formURL: url })
+            })
+        }
+        function updateVarianModalForm() {
+            $('.update-varian').each(function () {
+                $(this).modalForm({ formURL: $(this).data('form-url') })
+            })
+        }
+        createVarianModalForm()
+        updateVarianModalForm()
     </script>
 {% endblock script %}
