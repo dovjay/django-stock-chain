@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'phonenumber_field',
-    'crispy_forms'
+    'crispy_forms',
+    'bootstrap_modal_forms'
 ]
 
 MIDDLEWARE = [

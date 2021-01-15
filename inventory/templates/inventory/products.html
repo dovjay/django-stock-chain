@@ -6,28 +6,6 @@
             <h4 class="m-b-lg">Daftar Produk</h4>
             <div class="col-md-12">
                 <div class="mb-4 row d-flex">
-                    {% if user.is_superuser %}
-                        <div class="form-group col-sm-12 col-md-3">
-                            <label for="control-demo-6">Gudang/Toko</label>
-                            <div id="control-demo-6">
-                                <select class="form-control" onchange="location = this.value;">
-                                    {% for item in warehouses %}
-                                        <option 
-                                            {% if item.name == warehouse_name %} selected {% endif %} 
-                                            value="{% url 'inventory-products' %}?warehouse_id={{item.id}}"
-                                        >
-                                            {{item.name}}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="form-group col-sm-12 col-md-3">
-                            <label for="wh">Gudang/Toko</label>
-                            <input value="{{warehouse.name}}" class="form-control" disabled />
-                        </div>
-                    {% endif %}
                     <div class="form-group col-sm-12 col-md-5">
                         <label for="search">Cari</label>
                         <div class="d-flex">
@@ -45,6 +23,7 @@
                 <table class="table table-hover">
                     <tr>
                         <th>Id</th>
+                        <th>Gudang/Toko</th>
                         <th>Gambar</th>
                         <th>Nama</th>
                         <th>Kode</th>
@@ -55,6 +34,7 @@
                     {% for product in products %}
                         <tr>
                             <td>{{product.id}}</td>
+                            <td>{{product.warehouse.name}}</td>
                             <td>
                                 <img src="{{product.image.url}}" width="150px">
                             </td>
@@ -79,7 +59,7 @@
     <script>
         function search() {
             keywords = $("#search").val()
-            window.location = "{% url 'inventory-products' %}" + '?q=' + keywords + '&' + 'warehouse_id=' + getCookie('warehouse_id')
+            window.location = "{% url 'inventory-products' %}" + '?q=' + keywords
         }
 
         function deleteProduct(url, name) {

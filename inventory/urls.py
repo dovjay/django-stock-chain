@@ -4,7 +4,9 @@ from . import views
 urlpatterns = [
     path('', views.dashboard, name='inventory-dashboard'),
     path('varian-product/', views.varian_product, name='inventory-varian-product'),
-    path('create-varian-product/<int:project_id>/', views.CreateVarianProduct.as_view(), name='inventory-create-varian-product'),
+    path('create-bs-varian-product/<int:product_id>/', views.CreateBSVarianProduct.as_view(), name='inventory-create-bs-varian-product'),
+    path('update-bs-varian-product/<int:pk>/', views.UpdateBSVarianProduct.as_view(), name='inventory-update-bs-varian-product'),
+    path('create-varian-product/<int:product_id>/', views.CreateVarianProduct.as_view(), name='inventory-create-varian-product'),
     path('update-varian-product/<int:pk>/', views.UpdateVarianProduct.as_view(), name='inventory-update-varian-product'),
     path('delete-varian-product/<int:pk>/', views.DeleteVarianProduct.as_view(), name='inventory-delete-varian-product'),
     path('products/', views.products, name='inventory-products'),
