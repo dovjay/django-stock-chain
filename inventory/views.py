@@ -59,9 +59,9 @@ def products(request):
         # search
         if request.GET.get('q'):
             query = request.GET.get('q')
-            products = Product.objects.filter(Q(warehouse=warehouse), Q(sku__contains=query) | Q(name__contains=query))
+            products = Product.objects.filter(Q(sku__contains=query) | Q(name__contains=query))
         else:
-            products = Product.objects.filter(warehouse=warehouse)
+                products = Product.objects.all()
 
     else:
         try:
@@ -79,10 +79,7 @@ def products(request):
             products = Product.objects.filter(warehouse=permission.warehouse)
         
     context = {
-        'products': products,
-        'warehouses': warehouses,
-        'warehouse': warehouse,
-        'warehouse_name': warehouse.name
+        'products': products
     }
 
     response = render(request, 'inventory/products.html', context)
