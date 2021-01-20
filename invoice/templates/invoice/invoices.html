@@ -1,6 +1,6 @@
 {% extends "inventory/base.html" %}
 {% load crispy_forms_tags %}
-
+{% load humanize %}
 {% block content %}
     <div class="col-md-12">
         <div class="widget p-lg">
@@ -57,7 +57,7 @@
                             <td>{{invoice.customer|default:'-'}}</td>
                             <td>{{invoice.status}}</td>
                             <td>{{invoice.due}}</td>
-                            <td>{{invoice.get_total}}</td>
+                            <td>{{invoice.get_total|intcomma}}</td>
                             <td>
                                 {% if invoice.status != 'DRAFT' %}
                                     <a href={% url 'invoice-generate-pdf' invoice.id %} class="btn btn-warning mr-1">Print</a>
@@ -124,7 +124,7 @@
                                 <td>${sku}</td>
                                 <td>${varian_product__size} / ${varian_product__product_type}</td>
                                 <td>${quantity}</td>
-                                <td>${price}</td>
+                                <td>${price.toLocaleString('en')}</td>
                             </tr>
                         `)
                     }

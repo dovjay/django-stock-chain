@@ -165,7 +165,7 @@
 
         function countTotal() {
             let subTotal = 0
-            let discount = $('#discount').val()
+            let discount = Number($('#discount').val())
             let total = 0
 
             // count subTotal price
@@ -177,10 +177,9 @@
             }
 
             total = subTotal - discount
-            console.log(total, subTotal, discount)
-            $('#subTotal').text(`Rp ${subTotal}`)
-            $('#discountTotal').text(`Rp ${discount}`)
-            $('#total').text(`Rp ${total}`)
+            $('#subTotal').text(`Rp ${subTotal.toLocaleString('en')}`)
+            $('#discountTotal').text(`Rp ${discount.toLocaleString('en')}`)
+            $('#total').text(`Rp ${total.toLocaleString('en')}`)
             $("input[name='total']").val(subTotal)
         }
 

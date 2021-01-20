@@ -1,5 +1,7 @@
 {% extends "inventory/base.html" %}
 
+{% load humanize %}
+
 {% block content %}
     <div class="col-md-12">
         <div class="widget p-lg">
@@ -71,8 +73,8 @@
                                 <td>{{object.size}}</td>
                                 <td>{{object.seri}}</td>
                                 <td>{{object.product_type}}</td>
-                                <td>{{object.buy_price}}</td>
-                                <td>{{object.sell_price}}</td>
+                                <td>{{object.buy_price|intcomma}}</td>
+                                <td>{{object.sell_price|intcomma}}</td>
                                 <td>{{object.stock}}</td>
                                 <td>
                                     <button data-form-url={% url 'inventory-update-bs-varian-product' object.id %} type="button" class="btn btn-secondary update-varian">Update</a>
