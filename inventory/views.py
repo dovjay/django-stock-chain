@@ -120,8 +120,12 @@ class DeleteProduct(LoginRequiredMixin, DeleteView):
 @login_required
 def varian_product(request):
     if request.GET.get('product_id'):
-        product = Product.objects.get(pk=request.GET.get('product_id'))
-        varian_products = VarianProduct.objects.filter(product=product)
+        try:
+            product = Product.objects.get(pk=request.GET.get('product_id'))
+            varian_products = VarianProduct.objects.filter(product=product)
+        except ObjectDoesNotExist:
+            product = None 
+            varian_products = None
     else:
         product = None
         varian_products = None
